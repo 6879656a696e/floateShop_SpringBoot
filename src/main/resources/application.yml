@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/floatedshop?serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto: update
+
+jwt:
+  header: Authorization
+  secret: ZmxvYXRlZHNob3Atc3ByaW5nLWJvb3Qtand0LXNlY3JldC1mbG9hdGVkc2hvcC1zcHJpbmctYm9vdC1qd3Qtc2VjcmV0Cg==
+  token-validity-in-seconds: 86400

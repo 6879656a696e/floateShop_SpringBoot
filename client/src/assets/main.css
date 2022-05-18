@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Qwitcher+Grypen:wght@400;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+body {
+    font-family:'Roboto', 'IBM Plex Mono',  'Noto Sans KR', sans-serif;
+    font-weight: normal;
+    overflow: hidden;
+    background: #eff0ea;
+    font-size: 13px;
+}
+.myfont {
+  font-family: 'Noto Sans KR';
+  letter-spacing: -1px;
+  font-weight: 400;
+}
+
+a{
+    text-decoration: none;
+}
+li {
+    list-style: none;
+}
+
+.logo,
+.logo > a {
+  font-family: 'Qwitcher Grypen', cursive;
+  font-size: 3rem;
+}
