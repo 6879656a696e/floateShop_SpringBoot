@@ -1,5 +1,6 @@
 package com.woori.demo.controller;
 
+import com.woori.demo.domain.User;
 import com.woori.demo.dto.UserDto;
 import com.woori.demo.service.UserService;
 import lombok.AllArgsConstructor;
@@ -31,5 +32,10 @@ public class UserController {
             result= "이미 존재하는 회원입니다.";
         }
         return result;
+    }
+
+    @PostMapping("/userInfo")
+    public UserDto getInfo(@RequestBody UserDto dto){
+        return userService.getInfo(dto.getEmail());
     }
 }

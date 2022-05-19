@@ -10,10 +10,11 @@
       <v-app-bar-nav-icon 
           @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
-        <span white--text>{{ $route.name }}</span>
+        <span class="menuName">{{ $route.name }}</span>
       <v-spacer></v-spacer>
       <div>
         <router-link to="/cart">
+          <span v-if="$store.state.isLogin">{{ $store.state.username }} 님, 반갑습니다.</span>
          <v-icon size="26px">
               mdi-cart
             </v-icon>
@@ -74,6 +75,12 @@ export default {
 <style scoped>
 @import './assets/main.css';
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Qwitcher+Grypen:wght@400;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+.menuName {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
 #header {
   background: transparent;

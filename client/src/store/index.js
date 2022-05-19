@@ -1,10 +1,16 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
+import axios from "axios";
 
 Vue.use(Vuex);
 
 export const store =  new Vuex.Store({
+  plugins: [createPersistedState()],
   state: {
+    id: null,
+    username:null,
+    isLogin: false,
     products:[
         {
           id: 1,
@@ -96,98 +102,122 @@ export const store =  new Vuex.Store({
           quantity: 1,
           itemtotalprice: 0,
           alias: "perfume",
-        }, 
+        },
       ],
-      cart: [
-        // {
-        //   id: 1,
-        //   title: '디퓨저1',
-        //   src: require('@/assets/imgs/diffuser1.jpg'),
-        //   price: 39900,
-        //   itemtotalprice: 39900,
-        //   quantity: 5,
-        //   divider: true,
-        //   inset: true,
-        // },{
-        //   id: 4,
-        //   title: '디퓨저4',
-        //   src: require('@/assets/imgs/diffuser2.jpg'),
-        //   price: 29900,
-        //   itemtotalprice: 29900,
-        //   quantity: 4,
-        //   divider: true,
-        //   inset: true,
-        // },{
-        //   id: 7,
-        //   title: '디퓨저7',
-        //   src: require('@/assets/imgs/diffuser3.jpg'),
-        //   price: 49900,
-        //   itemtotalprice: 49900,
-        //   quantity: 1,
-        //   divider: true,
-        //   inset: true,
-        // },
-      ],
-      orderedList: [
-
-      ],
+    cart: [
+      // {
+      //   id: 1,
+      //   title: '디퓨저1',
+      //   src: require('@/assets/imgs/diffuser1.jpg'),
+      //   price: 39900,
+      //   itemtotalprice: 39900,
+      //   quantity: 5,
+      //   divider: true,
+      //   inset: true,
+      // },{
+      //   id: 4,
+      //   title: '디퓨저4',
+      //   src: require('@/assets/imgs/diffuser2.jpg'),
+      //   price: 29900,
+      //   itemtotalprice: 29900,
+      //   quantity: 4,
+      //   divider: true,
+      //   inset: true,
+      // },{
+      //   id: 7,
+      //   title: '디퓨저7',
+      //   src: require('@/assets/imgs/diffuser3.jpg'),
+      //   price: 49900,
+      //   itemtotalprice: 49900,
+      //   quantity: 1,
+      //   divider: true,
+      //   inset: true,
+      // },
+    ],
+    orderedList: [ ],
   },
   actions: {
+    LOGIN({commit}, data){
+      commit("loginSuccess",  data.id);
+      axios.post("/api/userInfo", {
+        email: data.id,
+      })
+          .then(res => {
+            // console.log(res);
+            // commit("loginSuccess",  data.id, res.data.name);
+            // console.log("res.data.name="+res.data.name);
+            this.state.username=res.data.name;
+          })
+          .catch(err=>{
+            console.log(err);
+          })
+    },
     addOrder({ state, commit }, product) {
       const productItem = state.products.find(item => item.id === product.id);
       const cartItem = state.cart.find(item => item.id === product.id);
-      
+
       //장바구니에 같은 제품이 없을 때 장바구니에 추가
       if( !cartItem ) {
         //console.log("productItem", productItem.title );
         commit('addCart', productItem);
-        
+
       } else {
         if( product.quantity > 0 ) {
           //장바구니에 같은 제품이 있을 때 장바구니의 제품 수량을 증가
           //console.log( "addcartQuan", cartItem.quantity );
-          commit('incrementItemQuantity', cartItem); 
+          commit('incrementItemQuantity', cartItem);
         }
 
     commit( 'incrementItemTotalPrice', cartItem );
     //console.log(cartItem.itemtotalprice);
       }
   },
-  //장바구니 수량 빼기 
-  subOrder({state, commit}, cart) {
-    const cartItem = state.cart.find(item => item.id === cart.id);
-    if( cartItem.quantity > 0 ) {
-      commit('decrementItemQuantity', cartItem);
-      commit('decrementItemTotalPrice', cartItem);
-      //console.log( "subCartQuan", cartItem.quantity );
-   }
+    //장바구니 수량 빼기
+    subOrder({state, commit}, cart) {
+      const cartItem = state.cart.find(item => item.id === cart.id);
+      if( cartItem.quantity > 0 ) {
+        commit('decrementItemQuantity', cartItem);
+        commit('decrementItemTotalPrice', cartItem);
+        //console.log( "subCartQuan", cartItem.quantity );
+     }
 
-   if( cartItem.quantity == 0 ) {
-      commit('subCart', cartItem);
-      //console.log( "cartItem: ", cartItem );
-     //connsole.log( "findIndex",state.cart.findIndex( cart=> cart.id == cartItem.id ));
-   }
-  },
-  addOrderedList({ state } ) {
-    var orderedList = state.cart.filter( ()=> true );
-    // console.log("cart", cart ); 실행하려면 상단 매개변수에 cart를 추가할 것 
-    // console.log("cart 길이", cart.length );
-  //  console.log("cart배열 복사", orderedList);
-    state.orderedList = orderedList;
-    if( state.orderedList ) {
-      var cartLength = state.cart.length;
-      //console.log( cartLength );
-      state.cart.splice( 0, cartLength ); 
-    }
-  },
-  removeOrderedList({ state }) {
+     if( cartItem.quantity == 0 ) {
+        commit('subCart', cartItem);
+        //console.log( "cartItem: ", cartItem );
+       //connsole.log( "findIndex",state.cart.findIndex( cart=> cart.id == cartItem.id ));
+     }
+    },
+    addOrderedList({ state } ) {
+      var orderedList = state.cart.filter( ()=> true );
+      // console.log("cart", cart ); 실행하려면 상단 매개변수에 cart를 추가할 것
+      // console.log("cart 길이", cart.length );
+    //  console.log("cart배열 복사", orderedList);
+      state.orderedList = orderedList;
+      if( state.orderedList ) {
+        var cartLength = state.cart.length;
+        //console.log( cartLength );
+        state.cart.splice( 0, cartLength );
+      }
+    },
+    removeOrderedList({ state }) {
     var orderedLength = state.orderedList.length;
     //console.log( orderedLength );
     state.orderedList.splice( 0, orderedLength);
-      
+
   },
 },
   mutations: {
+    loginSuccess(state, id) {
+      state.isLogin = true;
+      state.id = id;
+      console.log(id);
+      console.log(name);
+    },
+    logout(state) {
+      state.isLogin = false;
+      state.id = null;
+      localStorage.removeItem("access_token")
+    },
     addCart( state, product ){
       state.cart.push({
           id: product.id,
@@ -199,7 +229,7 @@ export const store =  new Vuex.Store({
           inset: true,
           quantity: 1,
         });
-        
+
         //alert("장바구니에 상품을 담았습니다.");
         //console.log( "addCart", product );
       },
@@ -224,6 +254,9 @@ export const store =  new Vuex.Store({
         },
   },
   getters: {
+    isLogin(state){
+      return state.token == null ? false : true;
+    },
     getcartProducts(state) {
       return state.cart.map(cartItem => {
         const product = state.products.find(product => product.id === cartItem.productId);
@@ -289,7 +322,7 @@ export const store =  new Vuex.Store({
       return delFee;
     }
   },
-  getOrderedProducts(state) {
+    getOrderedProducts(state) {
     return state.orderedList.map(cartItem => {
         const product = state.products.find(product => product.id === cartItem.productId);
         if(product === undefined) {
@@ -351,6 +384,6 @@ export const store =  new Vuex.Store({
       return delFee;
     }
   },
-  }
+  },
 });
 

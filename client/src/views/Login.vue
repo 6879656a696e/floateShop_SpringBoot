@@ -80,8 +80,14 @@
             password: that.pw,
             email: that.id,
           })
-              .then(() => {
-                alert("로그인 성공!");
+              .then(res => {
+                let token=res.data.token;
+                localStorage.setItem("access_token", token);
+                const data={
+                  id: that.id,
+                }
+                this.$store.dispatch("LOGIN", data);
+                alert("로그인 성공");
                 this.$router.push('/');
               })
               .catch(err => {

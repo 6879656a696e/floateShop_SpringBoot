@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -55,5 +56,10 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDto getMyUserWithAuthorities() {
         return UserDto.from(SecurityUtil.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByEmail).orElse(null));
+    }
+
+    //회원정보 가져오기
+    public UserDto getInfo(String email){
+        return  UserDto.from(userRepository.findOneByEmail(email).orElse(null));
     }
 }
