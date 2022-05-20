@@ -34,7 +34,7 @@ public class UserService {
                 .address1(dto.getAddress1())
                 .address2(dto.getAddress2())
                 .zipcode(dto.getZipcode())
-                .activated(dto.isActivated())
+                .activated(true)
                 .createdAt(LocalDateTime.now())
                 .authorities(Collections.singleton(authority))
                 .build();

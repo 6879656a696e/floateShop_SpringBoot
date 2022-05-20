@@ -17,10 +17,22 @@
     </v-list-item>
         
         <v-flex class="mt-5">
-        <v-btn justify="between" @click="movePage( menu2.target )" v-for="menu2 in menu2" :key="menu2.title" color="transparent" elevation="0"  >
-                <v-icon class="mr-2">{{ menu2.icon }}</v-icon>
-                <span class="myfont">{{ menu2.title }} </span>
-        </v-btn>
+          <router-link to="/login"  v-if="$store.state.isLogin===false">
+            <v-btn justify="between" color="transparent" elevation="0"  >
+              <v-icon class="mr-2">mdi-account</v-icon>
+              <span class="myfont">로그인</span>
+            </v-btn>
+          </router-link>
+          <div v-else>
+            <v-btn  justify="between" @click="movePage( menu2.target )" v-for="menu2 in menu2" :key="menu2.title" color="transparent" elevation="0"  >
+                    <v-icon class="mr-2">{{ menu2.icon }}</v-icon>
+                    <span class="myfont">{{ menu2.title }} </span>
+            </v-btn>
+            <v-btn color="transparent" elevation="0" @click="logout">
+              <v-icon class="mr-2">mdi-logout</v-icon>
+              <span class="myfont">로그아웃</span>
+            </v-btn>
+          </div>
         </v-flex>
         </v-list-item-group>
       </v-list>
@@ -44,8 +56,8 @@
             menu2: [ 
                 {
                     icon: 'mdi-account',
-                    title: '내 계정', 
-                    target: 'Login'
+                    title: '마이페이지',
+                    target: 'Mypage'
                 }, {
                     icon: 'mdi-cart',
                     title: '장바구니',
@@ -60,6 +72,10 @@
         methods: {
           movePage(target){
             this.$router.push({ name: target }).catch( ()=>{});
+          },
+          logout(){
+            this.$store.commit("logout");
+            this.$router.push("/");
           },
         }
       }

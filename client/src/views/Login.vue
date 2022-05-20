@@ -87,12 +87,13 @@
                   id: that.id,
                 }
                 this.$store.dispatch("LOGIN", data);
-                alert("로그인 성공");
+                // alert("로그인 성공");
                 this.$router.push('/');
               })
               .catch(err => {
                 console.log(err);
-                alert("아이디나 비밀번호를 확인해주세요. : (");
+                alert(err);
+                //alert("아이디나 비밀번호를 확인해주세요. : (");
               })
         }
       }

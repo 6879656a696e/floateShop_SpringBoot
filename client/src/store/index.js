@@ -104,49 +104,17 @@ export const store =  new Vuex.Store({
           alias: "perfume",
         },
       ],
-    cart: [
-      // {
-      //   id: 1,
-      //   title: '디퓨저1',
-      //   src: require('@/assets/imgs/diffuser1.jpg'),
-      //   price: 39900,
-      //   itemtotalprice: 39900,
-      //   quantity: 5,
-      //   divider: true,
-      //   inset: true,
-      // },{
-      //   id: 4,
-      //   title: '디퓨저4',
-      //   src: require('@/assets/imgs/diffuser2.jpg'),
-      //   price: 29900,
-      //   itemtotalprice: 29900,
-      //   quantity: 4,
-      //   divider: true,
-      //   inset: true,
-      // },{
-      //   id: 7,
-      //   title: '디퓨저7',
-      //   src: require('@/assets/imgs/diffuser3.jpg'),
-      //   price: 49900,
-      //   itemtotalprice: 49900,
-      //   quantity: 1,
-      //   divider: true,
-      //   inset: true,
-      // },
-    ],
-    orderedList: [ ],
+    cart: [],
+    orderedList: [],
   },
   actions: {
     LOGIN({commit}, data){
-      commit("loginSuccess",  data.id);
+        commit("loginSuccess",  data.id);
       axios.post("/api/userInfo", {
         email: data.id,
       })
           .then(res => {
-            // console.log(res);
-            // commit("loginSuccess",  data.id, res.data.name);
-            // console.log("res.data.name="+res.data.name);
-            this.state.username=res.data.name;
+              commit("setUsername",  res.data.name);
           })
           .catch(err=>{
             console.log(err);
@@ -210,12 +178,14 @@ export const store =  new Vuex.Store({
     loginSuccess(state, id) {
       state.isLogin = true;
       state.id = id;
-      console.log(id);
-      console.log(name);
     },
+      setUsername(state, username){
+        state.username=username;
+      },
     logout(state) {
       state.isLogin = false;
       state.id = null;
+      state.username=null;
       localStorage.removeItem("access_token")
     },
     addCart( state, product ){
