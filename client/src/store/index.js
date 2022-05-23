@@ -10,6 +10,7 @@ export const store =  new Vuex.Store({
   state: {
     id: null,
     username:null,
+    role: null,
     isLogin: false,
     products:[
         {
@@ -22,88 +23,89 @@ export const store =  new Vuex.Store({
           quantity: 1,
           itemtotalprice: 0,
           alias: "diffuser",
-        }, {
-          id: 2,
-          title: '디퓨저2',
-          src: require('@/assets/imgs/diffuser2.jpg'),
-          price: 29900,
-          base: "Rose",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "diffuser",
-        }, {
-          id: 3,
-          title: '디퓨저3',
-          src: require('@/assets/imgs/diffuser3.jpg'),
-          price: 39900,
-          base: "Honey",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "diffuser",
-        }, {
-          id: 4,
-          title: '디퓨저4',
-          src: require('@/assets/imgs/diffuser4.jpg'),
-          price: 49900,
-          base: "Lavender",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "diffuser",
-        }, {
-          id: 5,
-          title: '향수1',
-          src: require('@/assets/imgs/perfume1.jpg'),
-          price: 79900,
-          base: "TOP: Aldehydes / Middle: Herbal / Base: Musk",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "perfume",
-        }, {
-          id: 6,
-          title: '향수2',
-          src: require('@/assets/imgs/perfume2.jpg'),
-          price: 79900,
-          base: "TOP: Green / Middle: Spice / Base: Gourmande",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "perfume",
-        }, {
-          id: 7,
-          title: '향수3',
-          src: require('@/assets/imgs/perfume3.jpg'),
-          price: 79900,
-          base: "TOP: Citrus / Middle: Herbal / Base: Resin",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "perfume",
-        },{
-          id: 8,
-          title: '향수4',
-          src: require('@/assets/imgs/perfume4.jpg'),
-          price: 79900,
-          base: "TOP: Ozonic / Middle: Floral / Base: Wood",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "perfume",
-        }, {
-          id: 9,
-          title: '향수5',
-          src: require('@/assets/imgs/perfume5.jpg'),
-          price: 79900,
-          base: "TOP: Fruity / Middle: Herbal / Base: Amber",
-          flex:4,
-          quantity: 1,
-          itemtotalprice: 0,
-          alias: "perfume",
         },
-      ],
+      //     {
+    //       id: 2,
+    //       title: '디퓨저2',
+    //       src: require('@/assets/imgs/diffuser2.jpg'),
+    //       price: 29900,
+    //       base: "Rose",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "diffuser",
+    //     }, {
+    //       id: 3,
+    //       title: '디퓨저3',
+    //       src: require('@/assets/imgs/diffuser3.jpg'),
+    //       price: 39900,
+    //       base: "Honey",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "diffuser",
+    //     }, {
+    //       id: 4,
+    //       title: '디퓨저4',
+    //       src: require('@/assets/imgs/diffuser4.jpg'),
+    //       price: 49900,
+    //       base: "Lavender",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "diffuser",
+    //     }, {
+    //       id: 5,
+    //       title: '향수1',
+    //       src: require('@/assets/imgs/perfume1.jpg'),
+    //       price: 79900,
+    //       base: "TOP: Aldehydes / Middle: Herbal / Base: Musk",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "perfume",
+    //     }, {
+    //       id: 6,
+    //       title: '향수2',
+    //       src: require('@/assets/imgs/perfume2.jpg'),
+    //       price: 79900,
+    //       base: "TOP: Green / Middle: Spice / Base: Gourmande",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "perfume",
+    //     }, {
+    //       id: 7,
+    //       title: '향수3',
+    //       src: require('@/assets/imgs/perfume3.jpg'),
+    //       price: 79900,
+    //       base: "TOP: Citrus / Middle: Herbal / Base: Resin",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "perfume",
+    //     },{
+    //       id: 8,
+    //       title: '향수4',
+    //       src: require('@/assets/imgs/perfume4.jpg'),
+    //       price: 79900,
+    //       base: "TOP: Ozonic / Middle: Floral / Base: Wood",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "perfume",
+    //     }, {
+    //       id: 9,
+    //       title: '향수5',
+    //       src: require('@/assets/imgs/perfume5.jpg'),
+    //       price: 79900,
+    //       base: "TOP: Fruity / Middle: Herbal / Base: Amber",
+    //       flex:4,
+    //       quantity: 1,
+    //       itemtotalprice: 0,
+    //       alias: "perfume",
+    //     },
+       ],
     cart: [],
     orderedList: [],
   },
@@ -114,7 +116,9 @@ export const store =  new Vuex.Store({
         email: data.id,
       })
           .then(res => {
+            console.log(res);
               commit("setUsername",  res.data.name);
+              commit("setRole",  res.data.authorityDtoSet[0].authorityName);
           })
           .catch(err=>{
             console.log(err);
@@ -179,9 +183,12 @@ export const store =  new Vuex.Store({
       state.isLogin = true;
       state.id = id;
     },
-      setUsername(state, username){
-        state.username=username;
-      },
+    setUsername(state, username){
+      state.username=username;
+    },
+    setRole(state, role){
+      state.role=role;
+    },
     logout(state) {
       state.isLogin = false;
       state.id = null;

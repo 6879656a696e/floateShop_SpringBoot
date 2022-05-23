@@ -4,6 +4,7 @@ import com.woori.demo.dto.TokenDto;
 import com.woori.demo.dto.UserDto;
 import com.woori.demo.jwt.JwtFilter;
 import com.woori.demo.jwt.TokenProvider;
+import com.woori.demo.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +24,12 @@ import javax.validation.Valid;
 public class LoginController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final UserService userService;
 
-    public LoginController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public LoginController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserService userService) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.userService = userService;
     }
 
     @PostMapping("/login")

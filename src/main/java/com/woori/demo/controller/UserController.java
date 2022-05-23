@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping("/user/signup")
     @ResponseBody
@@ -36,6 +36,6 @@ public class UserController {
 
     @PostMapping("/userInfo")
     public UserDto getInfo(@RequestBody UserDto dto){
-        return userService.getInfo(dto.getEmail());
+        return userService.getUserWithAuthorities(dto.getEmail());
     }
 }

@@ -1,9 +1,12 @@
 <template>
    <v-container fluid secondary>
+     <div class="d-flex justify-end">
+       <router-link to="/addProduct"><v-btn color="primary">상품 등록하기</v-btn></router-link>
+     </div>
         <v-row dense>
           <v-col
             v-for="product in product"
-            :key="product.id"
+            :key="product.product_key"
             cols="12"
             lg="3"
             sm="4"
@@ -21,11 +24,11 @@
     >
       <v-img
         :aspect-ratio="16/9"
-        :src="product.src"
+        :src="product.product_pic"
       >
         <v-expand-transition>
         <router-link 
-        v-bind:to="{ path: `/productdetail/${ product.alias }/${ product.id }`, params: { index:`$( product.id )` },}">
+        v-bind:to="{ path: `/productdetail/${ product.product_category }/${ product.product_key }`, params: { index:`$( product.product_key )` },}">
           <div
             v-if="hover"
             class="d-flex transition-fast-in-fast-out success darken-4 v-card--reveal text-h5 white--text"
@@ -39,6 +42,7 @@
         style="position: relative;"
       >
         <v-btn
+            v-if="$store.state.role==='ROLE_USER'"
           absolute
           color="primary"
           class="white--text justify-center"
@@ -51,17 +55,22 @@
           <v-icon>mdi-cart</v-icon>
         </v-btn>
         <router-link 
-        v-bind:to="{ path: `/productdetail/${ product.alias }/${ product.id }`, params: { index:`$( product.id )` },}">
+        v-bind:to="{ path: `/productdetail/${ product.product_category }/${ product.product_key }`, params: { index:`$( product.product_key )` },}">
         <div class="grey--text mb-2">
-          {{ product.base }}
+          {{ product.product_desc }}
         </div>
         <div class="tgrey--text text-h6"
-          >{{ product.title }}</div>
+          >{{ product.product_name }}</div>
         <div class="font-weight-light mb-2">
-          {{ String(product.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+          {{ String(product.product_price).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
         </div>
         </router-link>
       </v-card-text>
+
+      <div v-if="$store.state.role==='ROLE_ADMIN'" class="d-flex justify-end align-center my-4" >
+        <v-btn depressed x-small color="#ea9d96" class="mx-1" @click="pModify">수정</v-btn>
+        <v-btn  depressed x-small color="#8aaace" class="mx-1" @click="pDelete">삭제</v-btn>
+      </div>
     </v-card>
     </v-hover>
     </v-col>
@@ -84,7 +93,16 @@
       },
     data(){
       return {
-        product: this.$store.state.products,
+        product: {
+          product_key: null,
+          product_name: '',
+          product_pic: '',
+          product_price: null,
+          product_desc: '',
+          product_cnt: null,
+          itemtotalprice: 0,
+          product_category: "",
+        },
         sheet: false,
         warningsign: "장바구니에 추가되었습니다.",
       }
@@ -97,7 +115,24 @@
       onchange( val ) {
         this.sheet = val
       },
+      pModify(){
+        console.log("수정원해용");
+      },
+      pDelete(){
+        console.log("삭제원해용");
+      }
     },
+    created() {
+      let that= this;
+      this.$axios.get('api/productList')
+          .then((res) => {
+            console.log(res);
+            that.product=res.data;
+          })
+          .catch(err => {
+            console.log(err);
+          })
+    }
   }
 </script>
 

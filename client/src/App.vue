@@ -13,8 +13,8 @@
         <span class="menuName">{{ $route.name }}</span>
       <v-spacer></v-spacer>
       <div>
-        <router-link to="/cart">
-          <span v-if="$store.state.isLogin">{{ $store.state.username }} 님, 반갑습니다.</span>
+        <span v-if="$store.state.isLogin">{{ $store.state.username }} 님, 반갑습니다.</span>
+        <router-link to="/cart" v-if="$store.state.role==='ROLE_USER'">
          <v-icon size="26px">
               mdi-cart
             </v-icon>
