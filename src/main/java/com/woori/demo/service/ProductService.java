@@ -31,6 +31,7 @@ public class ProductService {
                 .product_cnt(dto.getProduct_cnt())
                 .product_desc(dto.getProduct_desc())
                 .product_pic(dto.getProduct_pic())
+                .fileId(dto.getFileId())
                 .product_price(dto.getProduct_price())
                 .product_num(dto.getProduct_num())
                 .activated(true)

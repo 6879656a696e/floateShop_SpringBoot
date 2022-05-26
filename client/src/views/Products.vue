@@ -1,5 +1,5 @@
 <template>
-   <v-container fluid secondary>
+   <v-container fluid secondary style="min-height: 100vh">
      <div class="d-flex justify-end">
        <router-link to="/addProduct"><v-btn color="primary">상품 등록하기</v-btn></router-link>
      </div>
@@ -24,7 +24,7 @@
     >
       <v-img
         :aspect-ratio="16/9"
-        :src="product.product_pic"
+        :src='"/upload/"+product.product_pic'
       >
         <v-expand-transition>
         <router-link 

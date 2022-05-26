@@ -7,7 +7,7 @@
       lg="6"
     >
       <v-card id="signupForm" class="rounded-lg" elevation="0">
-        <v-form ref="form" >
+        <v-form ref="form" action="/post" method="post" enctype="multipart/form-data">
         <v-card-text>
             <div class="inputBoxWrap">
               <span class="formTitle">상품명</span>
@@ -43,8 +43,8 @@
             <span class="formTitle">사진</span>
             <input
                 type="file"
+                name="file"
                 @change="upload"
-                name="pPic"
             >
           </div>
 
@@ -83,25 +83,6 @@
             취소
           </v-btn>
           <v-spacer></v-spacer>
-          <v-slide-x-reverse-transition>
-            <v-tooltip
-              v-if="formHasErrors"
-              left
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  class="my-0"
-                  v-bind="attrs"
-                  @click="resetForm"
-                  v-on="on"
-                >
-                  <v-icon>mdi-refresh</v-icon>
-                </v-btn>
-              </template>
-              <span>Refresh form</span>
-            </v-tooltip>
-          </v-slide-x-reverse-transition>
           <v-btn
           outlined
             color="success"
@@ -122,6 +103,7 @@
     data: () => ({
       errorMessages: '',
       items: ['Diffuser', 'Perfume'],
+      image:null,
       pName: null,
       pCate: null,
       pNum: null,
@@ -158,35 +140,31 @@
 
     methods: {
       upload(e){
-        let image = e.target.files[0];
-        this.pPic = image.name;
-      },
-      resetForm() {
-        this.errorMessages = []
-        this.formHasErrors = false
-
-        Object.keys(this.form).forEach(f => {
-          this.$refs[f].reset()
-        })
+        this.image = e.target.files[0];
       },
       submit() {
         const validate = this.$refs.form.validate();
         let that = this;
+        let formData=new FormData();
+        formData.append("product_name", that.pName);
+        formData.append("product_category", that.pCate);
+        formData.append("product_num", that.pNum);
+        formData.append("file", that.image);
+        formData.append("product_price", that.pPrice);
+        formData.append("product_desc", that.pDesc);
+        formData.append("product_cnt", that.pCnt);
 
         if (validate) {
-          this.$axios.post('api/admin/addProduct', {
-            product_name: that.pName,
-            product_category: that.pCate,
-            product_num: that.pNum,
-            product_pic: that.pPic,
-            product_price: that.pPrice,
-            product_desc: that.pDesc,
-            product_cnt: that.pCnt,
+          this.$axios({
+            method: "post",
+            url: 'api/admin/addProduct',
+            data: formData,
+            headers: { "Content-Type": "multipart/form-data" }
           })
               .then((res) => {
                 console.log(res);
-                //alert("상품 등록 완료");
-               // this.$router.push('/product');
+                alert("상품 등록 완료");
+               this.$router.push('/product');
               })
               .catch(err => {
                 console.log(err);
