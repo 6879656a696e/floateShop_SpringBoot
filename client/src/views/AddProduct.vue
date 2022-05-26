@@ -146,13 +146,13 @@
         const validate = this.$refs.form.validate();
         let that = this;
         let formData=new FormData();
-        formData.append("product_name", that.pName);
-        formData.append("product_category", that.pCate);
-        formData.append("product_num", that.pNum);
+        formData.append("productName", that.pName);
+        formData.append("productCategory", that.pCate);
+        formData.append("productNum", that.pNum);
         formData.append("file", that.image);
-        formData.append("product_price", that.pPrice);
-        formData.append("product_desc", that.pDesc);
-        formData.append("product_cnt", that.pCnt);
+        formData.append("productPrice", that.pPrice);
+        formData.append("productDesc", that.pDesc);
+        formData.append("productCnt", that.pCnt);
 
         if (validate) {
           this.$axios({
@@ -164,7 +164,7 @@
               .then((res) => {
                 console.log(res);
                 alert("상품 등록 완료");
-               this.$router.push('/product');
+               this.$router.push('/products');
               })
               .catch(err => {
                 console.log(err);

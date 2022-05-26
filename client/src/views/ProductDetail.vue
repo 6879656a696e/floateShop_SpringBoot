@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="min-height: 100vh">
   <v-card
     class="mx-auto"
     width="100%"
@@ -7,13 +7,13 @@
       color="secondary" 
   >
     <v-img
-      :src="product.src"
+      :src="'/upload/'+product.productPic"
       min-height="200px"
     ></v-img>
 
     <v-card-title
         style="position: relative;">
-      {{ product.title }}
+      {{ product.productName }}
       <v-btn
           absolute
           color="primary"
@@ -29,7 +29,7 @@
     </v-card-title>
 
     <v-card-subtitle>
-      {{ String(product.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+      {{ String(product.productPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
     </v-card-subtitle>
     <!-- 탭 시작 -->
   <v-card 
@@ -85,10 +85,20 @@ import Ratings from '../components/Ratings.vue'
           "Ratings": Ratings
       },
     data(){
-        const menuId = this.$route.params.productId;
-        const base = this.$store.state.products[menuId-1].base;
+        // const menuId = this.$route.params.productId;
+        // const base = this.$store.state.products[menuId-1].base;
       return {
-        product: this.$store.state.products[menuId-1],
+        product: {
+          productKey: null,
+          productName: '',
+          productPic: '',
+          productPrice: null,
+          productDesc: '',
+          productCnt: null,
+          itemtotalprice: 0,
+          productCategory: "",
+        },
+        desc: '',
         show: false,
         tab: null,
         sheet: false,
@@ -96,8 +106,8 @@ import Ratings from '../components/Ratings.vue'
         tabs: [
           {
             index: '상세설명',
-            text: '주요 성분: '+base,
-        rating: false,
+            text: '주요 성분: ',
+            rating: false,
           },{
             index: '후기',
             text: '',
@@ -106,6 +116,17 @@ import Ratings from '../components/Ratings.vue'
         ],
         }
     },
+    mounted() {
+      let that=this;
+      this.$axios.get('http://localhost:8080/api/productDetail', {params: {id: this.$route.params.productId}})
+          .then((res) => {
+            console.log(res);
+            that.product=res.data[0];
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
     methods: {
       addOrder( product ){
         this.$store.dispatch( "addOrder", product );

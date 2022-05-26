@@ -17,47 +17,47 @@ import java.util.Set;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Long product_key;
+    @Column(name="productKey")
+    private Long productKey;
 
-    @Column(nullable=false)
-    private String product_name;
+    @Column(name="productName", nullable=false)
+    private String productName;
 
-    @Column(nullable = false)
-    private String product_num;
+    @Column(name="productNum", nullable = false)
+    private String productNum;
 
-    @Column(nullable=false)
-    private String product_category;
+    @Column(name="productCategory", nullable=false)
+    private String productCategory;
 
-    @Column
-    private String product_pic;
+    @Column(name="productPic")
+    private String productPic;
 
     @Column
     private Long fileId;
 
-    @Column(nullable = false)
-    private int product_price;
+    @Column(name="productPrice", nullable = false)
+    private int productPrice;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String product_desc;
+    @Column(name="productDesc", columnDefinition = "LONGTEXT")
+    private String productDesc;
 
-    @Column(nullable=false)
-    private int product_cnt;
+    @Column(name="productCnt", nullable=false)
+    private int productCnt;
 
     @Column
     private boolean activated;
 
     @Builder
-    public Product(Long product_key, String product_name, String product_num, String product_category, String product_pic, Long fileId, int product_price, String product_desc, int product_cnt, boolean activated) {
-        this.product_key = product_key;
-        this.product_name = product_name;
-        this.product_num = product_num;
-        this.product_category = product_category;
-        this.product_pic = product_pic;
+    public Product(Long productKey, String productName, String productNum, String productCategory, String productPic, Long fileId, int productPrice, String productDesc, int productCnt, boolean activated) {
+        this.productKey = productKey;
+        this.productName = productName;
+        this.productNum = productNum;
+        this.productCategory = productCategory;
+        this.productPic = productPic;
         this.fileId = fileId;
-        this.product_price = product_price;
-        this.product_desc = product_desc;
-        this.product_cnt = product_cnt;
+        this.productPrice = productPrice;
+        this.productDesc = productDesc;
+        this.productCnt = productCnt;
         this.activated = activated;
     }
 }

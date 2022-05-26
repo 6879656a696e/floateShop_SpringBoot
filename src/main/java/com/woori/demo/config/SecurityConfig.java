@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 @EnableWebSecurity
@@ -51,32 +52,41 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
 
                 .and()
-                .headers()
-                .frameOptions()
-                .sameOrigin()
+                    .headers()
+                    .frameOptions()
+                    .sameOrigin()
 
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //세션 사용 끄기
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //세션 사용 끄기
 
                 .and()
-                .authorizeRequests()
-                .antMatchers("/",
-                        "/favicon.ico",
-                        "/**/*.png",
-                        "/**/*.gif",
-                        "/**/*.svg",
-                        "/**/*.jpg",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js")
-                .permitAll()
-                .antMatchers("/admin").hasRole("ADMIN")
-                .antMatchers("/api/**").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/signup").permitAll()
-                .anyRequest().authenticated()
+                    .authorizeRequests()
+                    .antMatchers("/",
+                            "/favicon.ico",
+                            "/**/*.png",
+                            "/**/*.gif",
+                            "/**/*.svg",
+                            "/**/*.jpg",
+                            "/**/*.html",
+                            "/**/*.css",
+                            "/**/*.js",
+                            "/upload/**",
+                            "/api/**",
+                            "/signup",
+                            "/products",
+                            "/productdetail/**"
+                            )
+                    .permitAll()
+                    .antMatchers("/admin").hasRole("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
-                .apply(new JwtSecurityConfig(tokenProvider));
+                    .formLogin()
+                    .loginPage("/login")
+                    .successForwardUrl("/")
+                    .failureForwardUrl("/")
+                    .permitAll()
+                .and()
+                    .apply(new JwtSecurityConfig(tokenProvider));
     }
 }

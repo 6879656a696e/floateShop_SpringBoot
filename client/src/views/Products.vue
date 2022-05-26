@@ -6,7 +6,7 @@
         <v-row dense>
           <v-col
             v-for="product in product"
-            :key="product.product_key"
+            :key="product.productKey"
             cols="12"
             lg="3"
             sm="4"
@@ -24,11 +24,11 @@
     >
       <v-img
         :aspect-ratio="16/9"
-        :src='"/upload/"+product.product_pic'
+        :src='"/upload/"+product.productPic'
       >
         <v-expand-transition>
         <router-link 
-        v-bind:to="{ path: `/productdetail/${ product.product_category }/${ product.product_key }`, params: { index:`$( product.product_key )` },}">
+        v-bind:to="{ path: `/productdetail/${ product.productCategory }/${ product.productKey }`, params: { index:`$( product.productKey )` },}">
           <div
             v-if="hover"
             class="d-flex transition-fast-in-fast-out success darken-4 v-card--reveal text-h5 white--text"
@@ -55,21 +55,21 @@
           <v-icon>mdi-cart</v-icon>
         </v-btn>
         <router-link 
-        v-bind:to="{ path: `/productdetail/${ product.product_category }/${ product.product_key }`, params: { index:`$( product.product_key )` },}">
+        v-bind:to="{ path: `/productdetail/${ product.productCategory }/${ product.productKey }`, params: { index:`$( product.productKey )` },}">
         <div class="grey--text mb-2">
-          {{ product.product_desc }}
+          {{ product.productCategory }}
         </div>
         <div class="tgrey--text text-h6"
-          >{{ product.product_name }}</div>
+          >{{ product.productName }}</div>
         <div class="font-weight-light mb-2">
-          {{ String(product.product_price).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+          {{ String(product.productPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
         </div>
         </router-link>
       </v-card-text>
 
       <div v-if="$store.state.role==='ROLE_ADMIN'" class="d-flex justify-end align-center my-4" >
-        <v-btn depressed x-small color="#ea9d96" class="mx-1" @click="pModify">수정</v-btn>
-        <v-btn  depressed x-small color="#8aaace" class="mx-1" @click="pDelete">삭제</v-btn>
+        <v-btn depressed x-small color="#ea9d96" class="mx-1" @click="pModify(product.productKey)">수정</v-btn>
+        <v-btn  depressed x-small color="#8aaace" class="mx-1" @click="pDelete(product.productKey)">삭제</v-btn>
       </div>
     </v-card>
     </v-hover>
@@ -94,14 +94,14 @@
     data(){
       return {
         product: {
-          product_key: null,
-          product_name: '',
-          product_pic: '',
-          product_price: null,
-          product_desc: '',
-          product_cnt: null,
+          productKey: null,
+          productName: '',
+          productPic: '',
+          productPrice: null,
+          productDesc: '',
+          productCnt: null,
           itemtotalprice: 0,
-          product_category: "",
+          productCategory: "",
         },
         sheet: false,
         warningsign: "장바구니에 추가되었습니다.",
@@ -118,8 +118,17 @@
       pModify(){
         console.log("수정원해용");
       },
-      pDelete(){
-        console.log("삭제원해용");
+      pDelete(id){
+        //let that=this;
+        this.$axios.get('api/admin/deleteProduct', {params: {id: id}})
+            .then((res) => {
+              console.log(res);
+              alert(res.data);
+              this.$router.go();
+            })
+            .catch(err => {
+              console.log(err);
+            })
       }
     },
     created() {

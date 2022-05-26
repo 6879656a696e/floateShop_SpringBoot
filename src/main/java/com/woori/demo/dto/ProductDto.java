@@ -14,30 +14,30 @@ import java.util.stream.Collectors;
 @Setter
 @Builder
 public class ProductDto {
-    private long product_key;
-    private String product_name;
-    private String product_num;
-    private String product_category;
-    private String product_pic;
+    private long productKey;
+    private String productName;
+    private String productNum;
+    private String productCategory;
+    private String productPic;
     private Long fileId;
-    private int product_price;
-    private String product_desc;
-    private int product_cnt;
+    private int productPrice;
+    private String productDesc;
+    private int productCnt;
     private boolean activated;
 
     public static ProductDto from(Product product) {
         if(product == null) return null;
 
         return ProductDto.builder()
-                .product_key(product.getProduct_key())
-                .product_name(product.getProduct_name())
-                .product_num(product.getProduct_num())
-                .product_category(product.getProduct_category())
-                .product_pic(product.getProduct_pic())
+                .productKey(product.getProductKey())
+                .productName(product.getProductName())
+                .productNum(product.getProductNum())
+                .productCategory(product.getProductCategory())
+                .productPic(product.getProductPic())
                 .fileId(product.getFileId())
-                .product_price(product.getProduct_price())
-                .product_desc(product.getProduct_desc())
-                .product_cnt(product.getProduct_cnt())
+                .productPrice(product.getProductPrice())
+                .productDesc(product.getProductDesc())
+                .productCnt(product.getProductCnt())
                 .build();
     }
 }

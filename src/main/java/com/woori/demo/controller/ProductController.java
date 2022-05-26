@@ -1,5 +1,6 @@
 package com.woori.demo.controller;
 
+import com.woori.demo.domain.Product;
 import com.woori.demo.dto.FileDto;
 import com.woori.demo.dto.ProductDto;
 import com.woori.demo.service.FileService;
@@ -51,7 +52,7 @@ public class ProductController {
 
             Long fileId=fileService.saveFile(fileDto);
             dto.setFileId(fileId);
-            dto.setProduct_pic(filename);
+            dto.setProductPic(filename);
             productService.addProduct(dto);
         } catch(Exception e){
             e.printStackTrace();
@@ -60,11 +61,20 @@ public class ProductController {
 
     @GetMapping("/productList")
     @ResponseBody
-    public List getList() {
+    public List<Product> getList() {
         return productService.getProductList();
     }
 
-    @PostMapping("/admin/deleteProduct")
+    @GetMapping("/admin/deleteProduct")
     @ResponseBody
-    public 
+    public String productDelete(@RequestParam Long id){
+        productService.deleteProduct(id);
+        return "삭제 완료";
+    }
+
+    @GetMapping("/productDetail")
+    @ResponseBody
+    public List<Product> productDetail(@RequestParam Long id){
+        return productService.getProductDetail(id);
+    }
 }

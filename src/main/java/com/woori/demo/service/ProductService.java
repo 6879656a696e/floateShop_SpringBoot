@@ -26,14 +26,14 @@ public class ProductService {
     @Transactional
     public Product addProduct(ProductDto dto) {
         Product product=Product.builder()
-                .product_name(dto.getProduct_name())
-                .product_category(dto.getProduct_category())
-                .product_cnt(dto.getProduct_cnt())
-                .product_desc(dto.getProduct_desc())
-                .product_pic(dto.getProduct_pic())
+                .productName(dto.getProductName())
+                .productCategory(dto.getProductCategory())
+                .productCnt(dto.getProductCnt())
+                .productDesc(dto.getProductDesc())
+                .productPic(dto.getProductPic())
                 .fileId(dto.getFileId())
-                .product_price(dto.getProduct_price())
-                .product_num(dto.getProduct_num())
+                .productPrice(dto.getProductPrice())
+                .productNum(dto.getProductNum())
                 .activated(true)
                 .build();
 
@@ -41,9 +41,14 @@ public class ProductService {
     }
 
     public List<Product> getProductList(){
-//        productRepository.findAll().forEach(p->{
-//            System.out.println(p.toString());
-//        });
         return productRepository.findAll();
+    }
+
+    public void deleteProduct(Long id){
+        productRepository.deleteById(id);
+    }
+
+    public List<Product> getProductDetail(Long id){
+        return productRepository.findByProductKey(id);
     }
 }
