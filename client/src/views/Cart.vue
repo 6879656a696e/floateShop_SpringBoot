@@ -116,6 +116,16 @@ import Check from '../components/Check.vue'
     data(){
       return {
         cart: this.$store.state.cart,
+        // cart: {
+        //   productKey: null,
+        //   productName: '',
+        //   productPic: '',
+        //   productPrice: null,
+        //   productDesc: '',
+        //   productCnt: null,
+        //   itemtotalprice: 0,
+        //   productCategory: "",
+        // },
         cartTotal: this.$store.getters.cartTotal,
         delFee: this.$store.getters.deliveryFee,
         sheet: false,
@@ -124,7 +134,23 @@ import Check from '../components/Check.vue'
         warningsign: "주문이 완료되었습니다. 주문해주셔서 감사합니다.",
         }
     },
+    created() {
+      this.loadItems();
+    },
     methods: {
+        loadItems(){
+          let that=this;
+          this.$axios.get('api/getCartList', {params:  {
+            userKey: that.$store.state.userkey
+          }})
+              .then((res) => {
+                console.log(res);
+                //that.cart=res.data;
+              })
+              .catch(err => {
+                console.log(err);
+              })
+        },
         addOrder( cart ){
             this.$store.dispatch( "addOrder", cart );
       },

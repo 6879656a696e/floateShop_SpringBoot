@@ -64,7 +64,6 @@ public class UserService {
     }
 
     public User findUser(Long id){
-        System.out.println("findUser 타는 중!");
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         return user;

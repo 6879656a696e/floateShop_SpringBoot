@@ -4,12 +4,15 @@ import com.woori.demo.domain.Cart;
 import com.woori.demo.domain.CartItem;
 import com.woori.demo.domain.Product;
 import com.woori.demo.domain.User;
-import com.woori.demo.exception.ResourceNotFoundException;
 import com.woori.demo.repository.CartItemRepository;
 import com.woori.demo.repository.CartRepository;
 import com.woori.demo.repository.ProductRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartService {
@@ -23,14 +26,14 @@ public class CartService {
         this.cartItemRepository = cartItemRepository;
     }
 
-    public void addCart(Product netItem, User user, int count){
+    public void addCart(Product newItem, User user, int count){
         Cart cart = cartRepository.findByUserId(user.getId());
         if(cart == null){
             cart=Cart.createCart(user);
             cartRepository.save(cart);
         }
 
-        Product product=productRepository.findProductByProductKey(netItem.getProductKey());
+        Product product=productRepository.findProductByProductKey(newItem.getProductKey());
         CartItem cartItem = cartItemRepository.findByCartIdAndProductProductKey(cart.getId(), product.getProductKey());
 
         if(cartItem==null){
@@ -50,4 +53,14 @@ public class CartService {
         updateCart.addTotal(cartRepository.totalNum());
         cartRepository.save(updateCart);
     }
+
+    @Transactional
+    public List<CartItem> getCartList(Long userKey){
+        Cart cart = cartRepository.findByUserId(userKey);
+        CartItem cartItem=cartItemRepository.findByCartId(cart.getId());
+//        List<CartItem> cartItemList=new ArrayList<>();
+//        cartItemList= (List<CartItem>) cartItemRepository.findByCartId(cart.getId());
+        return (List<CartItem>) cartItem;
+    }
+
 }

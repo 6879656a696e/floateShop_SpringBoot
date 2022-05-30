@@ -10,5 +10,6 @@ public interface CartRepository  extends JpaRepository<Cart, Long> {
 
     @Query(value="select sum(count) from Cartitem group by cartKey", nativeQuery = true)
     int totalNum();
-    //Cart findById(Long userKey);
+
+    //Cart findByIdAndUserUserKey(Long userKey);
 }

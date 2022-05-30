@@ -1,13 +1,15 @@
 package com.woori.demo.controller;
 
+import com.woori.demo.domain.CartItem;
 import com.woori.demo.domain.Product;
 import com.woori.demo.domain.User;
-import com.woori.demo.dto.UserDto;
-import com.woori.demo.service.CartItemService;
 import com.woori.demo.service.CartService;
 import com.woori.demo.service.ProductService;
 import com.woori.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -27,12 +29,15 @@ public class CartController {
     @GetMapping("/addCart")
     @ResponseBody
     public void addCart(Long productKey, Long userKey){
-        System.out.println("product key="+productKey);
-        System.out.println("user key="+userKey);
         User user=userService.findUser(userKey);
         Product product=productService.findProduct(productKey);
-        System.out.println(user.toString());
         int count=1;
         cartService.addCart(product, user, count);
+    }
+
+    @GetMapping("/getCartList")
+    @ResponseBody
+    public List<CartItem> getCartList(@RequestParam  Long userKey){
+        return cartService.getCartList(userKey);
     }
 }

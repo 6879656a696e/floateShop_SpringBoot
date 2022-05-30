@@ -110,8 +110,6 @@
     methods: {
       addOrder( productKey, userKey ){
         //this.$store.dispatch( "addOrder", product );
-        console.log("product key="+productKey);
-        console.log("user key="+userKey);
         this.sheet = ! this.sheet;
         this.$axios.get('api/addCart', {params:  {productKey: productKey, userKey: userKey }})
             .then((res) => {
