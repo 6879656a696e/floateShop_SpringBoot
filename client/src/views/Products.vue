@@ -1,6 +1,6 @@
 <template>
    <v-container fluid secondary style="min-height: 100vh">
-     <div class="d-flex justify-end">
+     <div class="d-flex justify-end" v-if="$store.state.role==='ROLE_ADMIN'">
        <router-link to="/addProduct"><v-btn color="primary">상품 등록하기</v-btn></router-link>
      </div>
         <v-row dense>
@@ -50,7 +50,7 @@
           medium
           right
           top
-          v-on:click="addOrder( product )"
+          v-on:click="addOrder( product.productKey, $store.state.userkey )"
         >
           <v-icon>mdi-cart</v-icon>
         </v-btn>
@@ -108,9 +108,20 @@
       }
     },
     methods: {
-      addOrder( product ){
-        this.$store.dispatch( "addOrder", product );
+      addOrder( productKey, userKey ){
+        //this.$store.dispatch( "addOrder", product );
+        console.log("product key="+productKey);
+        console.log("user key="+userKey);
         this.sheet = ! this.sheet;
+        this.$axios.get('api/addCart', {params:  {productKey: productKey, userKey: userKey }})
+            .then((res) => {
+              console.log(res);
+              // alert(res.data);
+              // this.$router.go();
+            })
+            .catch(err => {
+              console.log(err);
+            })
       },
       onchange( val ) {
         this.sheet = val
@@ -120,7 +131,7 @@
       },
       pDelete(id){
         //let that=this;
-        this.$axios.get('api/admin/deleteProduct', {params: {id: id}})
+        this.$axios.get('api/admin/deleteProduct', {params:  { id: id }})
             .then((res) => {
               console.log(res);
               alert(res.data);

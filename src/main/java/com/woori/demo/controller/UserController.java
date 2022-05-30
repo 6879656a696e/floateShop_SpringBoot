@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/userInfo")
-    public UserDto getInfo(@RequestBody UserDto dto){
+    public UserDto getInfo(@RequestBody User dto){
         return userService.getUserWithAuthorities(dto.getEmail());
     }
 }

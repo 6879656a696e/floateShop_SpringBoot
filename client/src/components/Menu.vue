@@ -51,7 +51,7 @@
                       <span class="myfont">{{ menu2.title }} </span>
               </v-btn>
             </div>
-            <div v-else >
+            <div >
               <v-btn color="transparent" elevation="0" @click="logout">
                 <v-icon class="mr-2">mdi-logout</v-icon>
                 <span class="myfont">로그아웃</span>

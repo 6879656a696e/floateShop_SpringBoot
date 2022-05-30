@@ -9,6 +9,7 @@ export const store =  new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
     id: null,
+    userkey: null,
     username:null,
     role: null,
     isLogin: false,
@@ -48,6 +49,7 @@ export const store =  new Vuex.Store({
             console.log(res);
               commit("setUsername",  res.data.name);
               commit("setRole",  res.data.authorityDtoSet[0].authorityName);
+              commit("setUserkey",  res.data.id);
           })
           .catch(err=>{
             console.log(err);
@@ -114,6 +116,9 @@ export const store =  new Vuex.Store({
     },
     setUsername(state, username){
       state.username=username;
+    },
+    setUserkey(state, userkey){
+      state.userkey=userkey;
     },
     setRole(state, role){
       state.role=role;

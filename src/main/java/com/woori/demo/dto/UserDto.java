@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Data
 @Builder
 public class UserDto {
-    private long user_key;
+    private long id;
     private String name;
     private String email;
     private String password;
@@ -30,7 +30,7 @@ public class UserDto {
         if(user == null) return null;
 
         return UserDto.builder()
-                .user_key(user.getUser_key())
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .address1(user.getAddress1())

@@ -5,6 +5,7 @@ import com.woori.demo.domain.Product;
 import com.woori.demo.domain.User;
 import com.woori.demo.dto.ProductDto;
 import com.woori.demo.dto.UserDto;
+import com.woori.demo.exception.ResourceNotFoundException;
 import com.woori.demo.repository.ProductRepository;
 import com.woori.demo.repository.UserRepository;
 import com.woori.demo.util.SecurityUtil;
@@ -50,5 +51,11 @@ public class ProductService {
 
     public List<Product> getProductDetail(Long id){
         return productRepository.findByProductKey(id);
+    }
+
+    public Product findProduct(Long id){
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "productKey", id));
+        return product;
     }
 }
