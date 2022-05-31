@@ -1,5 +1,6 @@
 package com.woori.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.woori.demo.dto.CartDto;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Cart {
 
     private int total=1;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems = new ArrayList<>();
 
@@ -41,7 +43,7 @@ public class Cart {
         this.cartItems = cartItems;
     }
 
-    public void addTotal(int total){
+    public void setTotal(int total){
         this.total=total;
     }
 }

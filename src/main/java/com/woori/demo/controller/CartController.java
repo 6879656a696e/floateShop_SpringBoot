@@ -40,4 +40,29 @@ public class CartController {
     public List<CartItem> getCartList(@RequestParam  Long userKey){
         return cartService.getCartList(userKey);
     }
+
+    @GetMapping("/deleteCart")
+    @ResponseBody
+    public String deleteCart(Long productKey, Long userKey) {
+        User user=userService.findUser(userKey);
+        Product product=productService.findProduct(productKey);
+        cartService.deleteCart(product, user);
+        return "삭제 완료";
+    }
+
+    @GetMapping("/addCount")
+    @ResponseBody
+    public void addCount(Long productKey, Long userKey) {
+        User user=userService.findUser(userKey);
+        Product product=productService.findProduct(productKey);
+        cartService.addCount(product, user);
+    }
+
+    @GetMapping("/subCount")
+    @ResponseBody
+    public void subCount(Long productKey, Long userKey) {
+        User user=userService.findUser(userKey);
+        Product product=productService.findProduct(productKey);
+        cartService.subCount(product, user);
+    }
 }

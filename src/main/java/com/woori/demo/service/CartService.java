@@ -50,17 +50,51 @@ public class CartService {
         }
 
         Cart updateCart = cart;
-        updateCart.addTotal(cartRepository.totalNum());
+        updateCart.setTotal(cartRepository.totalNum());
         cartRepository.save(updateCart);
     }
 
     @Transactional
     public List<CartItem> getCartList(Long userKey){
         Cart cart = cartRepository.findByUserId(userKey);
-        CartItem cartItem=cartItemRepository.findByCartId(cart.getId());
-//        List<CartItem> cartItemList=new ArrayList<>();
-//        cartItemList= (List<CartItem>) cartItemRepository.findByCartId(cart.getId());
-        return (List<CartItem>) cartItem;
+        return cartItemRepository.findCartItemByCartId(cart.getId());
+    }
+
+    @Transactional
+    public void deleteCart(Product newItem, User user) {
+        Cart cart = cartRepository.findByUserId(user.getId());
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductProductKey(cart.getId(), newItem.getProductKey());
+        cartItemRepository.delete(cartItem);
+
+        Cart updateCart = cart;
+        updateCart.setTotal(cartRepository.totalNum()==null ? 0 : cartRepository.totalNum());
+        cartRepository.save(updateCart);
+    }
+
+    @Transactional
+    public void addCount(Product newItem, User user){
+        Cart cart = cartRepository.findByUserId(user.getId());
+        Product product=productRepository.findProductByProductKey(newItem.getProductKey());
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductProductKey(cart.getId(), product.getProductKey());
+
+        CartItem update = cartItem;
+        update.addCount(1);
+        cartItemRepository.save(update);
+    }
+
+    @Transactional
+    public void subCount(Product newItem, User user){
+        Cart cart = cartRepository.findByUserId(user.getId());
+        Product product=productRepository.findProductByProductKey(newItem.getProductKey());
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductProductKey(cart.getId(), product.getProductKey());
+
+        CartItem update = cartItem;
+        update.subCount(1);
+        cartItemRepository.save(update);
+
+        if(cartItem.getCount()==0){
+            cartItemRepository.delete(cartItem);
+        }
     }
 
 }

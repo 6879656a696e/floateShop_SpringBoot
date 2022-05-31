@@ -80,20 +80,20 @@
             password: that.pw,
             email: that.id,
           })
-              .then(res => {
-                let token=res.data.token;
-                localStorage.setItem("access_token", token);
-                const data={
-                  id: that.id,
-                }
-                this.$store.dispatch("LOGIN", data);
-                // alert("로그인 성공");
-                this.$router.push('/');
-              })
-              .catch(err => {
-                console.log(err);
-                alert("아이디나 비밀번호를 확인해주세요. : (");
-              })
+        .then(res => {
+          let token=res.data.token;
+          localStorage.setItem("access_token", token);
+          const data={
+            id: that.id,
+          }
+          this.$store.dispatch("LOGIN", data);
+          // alert("로그인 성공");
+          this.$router.push('/');
+        })
+        .catch(err => {
+          console.log(err);
+          alert("아이디나 비밀번호를 확인해주세요. : (");
+        })
         }
       }
     }

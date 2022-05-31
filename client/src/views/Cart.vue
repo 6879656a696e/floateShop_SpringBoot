@@ -7,7 +7,7 @@
        color="secondary"
         max-width="100%"
         class="d-flex mx-auto flex-column" 
-        v-if="$store.getters.getcartProducts.length === 0"
+        v-if="item.length===0"
       >
         <v-card-title class="success--text pt-12 flex-column">
           <div class="pt-12">
@@ -25,40 +25,36 @@
         </v-card-title>
        </v-card>
 
-       <template v-for="cart in cart">
-         <v-list-item :key="cart.id">
+       <template>
+         <v-list-item  v-for="(cart, idx) in item" :key="idx">
+
+           <v-btn color="transparent" depressed class="mybtn mr-5" @click="deleteItem( cart.product.productKey, $store.state.userkey)">&#215;</v-btn>
           <v-list-item-avatar width="10vw" height="10vw">
-            <v-img :src="cart.src"></v-img>
+            <v-img :src="'/upload/'+cart.product.productPic"></v-img>
           </v-list-item-avatar>
 
-          <v-list-item-content>
+          <v-list-item-content class="ml-3">
             <v-list-item-title>
-                {{ cart.title }}
+                {{ cart.product.productName }}
             </v-list-item-title>
             <v-list-item-subtitle>
-                {{ String(cart.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 <br>
-                수량: {{ $store.getters.getcartProductsthis( cart ).quantity }}, 총 금액: {{ String($store.getters.getcartProductsthis( cart ).itemtotalprice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+                {{ String(cart.product.productPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 <br>
+                수량: {{ cart.count }}, 총 금액: {{ String(cart.count*cart.product.productPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
             </v-list-item-subtitle>
           </v-list-item-content><br><br>
           <div>
           <v-btn outlined color="info"
-          v-on:click="addOrder( cart )" class="mr-1 mybtn">추가</v-btn>
+          v-on:click="addCount( cart.product.productKey, $store.state.userkey )" class="mr-1 mybtn">&#43;</v-btn>
           <v-btn outlined color="error" class="mybtn"
-          v-on:click="subOrder( cart )">삭제</v-btn>
+          v-on:click="subCount( cart.product.productKey, $store.state.userkey )">&#45;</v-btn>
           </div>
         </v-list-item>
-
-        <v-divider
-          v-if="cart.divider"
-          :key="cart.title"
-          :inset="cart.inset"
-        ></v-divider> 
       </template>
     </v-list>
   </v-card>
 
 <v-card
-    v-if="$store.getters.getcartProducts.length != 0"
+    v-if="item != ''"
     class="ml-auto"
     width="100%"
     tile
@@ -69,20 +65,20 @@
     <v-list-item>
       <v-list-item-content class="text-right">
         <v-list-item-title class="responFont text-h5">
-          총 {{ $store.getters.cartTotalItem }} 개 주문 합계 : {{ String($store.getters.cartTotal).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+          총 {{ itemTotal }} 개 주문 합계 : {{ String(cartTotal).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
     <v-list-item two-line>
       <v-list-item-content class="text-right">
-        <v-list-item-title>배송비 별도: {{ String($store.getters.deliveryFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원</v-list-item-title>
+        <v-list-item-title>배송비 별도: {{ String(delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원</v-list-item-title>
         <v-list-item-subtitle>80,000원 이상 구매시 무료배송</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
 
 
-    <v-btn block class="mt-12" height="8vh" color="error" outlined 
+    <v-btn block class="mt-12" height="8vh" color="error" outlined
     v-on:click="addOrderedList( cart )" >
       배송비 포함 {{ String(cartTotal +  delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 주문하기
     </v-btn>
@@ -115,19 +111,26 @@ import Check from '../components/Check.vue'
       },
     data(){
       return {
-        cart: this.$store.state.cart,
-        // cart: {
-        //   productKey: null,
-        //   productName: '',
-        //   productPic: '',
-        //   productPrice: null,
-        //   productDesc: '',
-        //   productCnt: null,
-        //   itemtotalprice: 0,
-        //   productCategory: "",
-        // },
-        cartTotal: this.$store.getters.cartTotal,
-        delFee: this.$store.getters.deliveryFee,
+        total: null,
+        item:{
+          cart:{
+            id: null,
+            total: null,
+          },
+          count: null,
+          product: {
+            productKey: null,
+            productName: '',
+            productPic: '',
+            productPrice: null,
+            productDesc: '',
+            productCnt: null,
+            productCategory: "",
+          }
+        },
+        itemTotal: null,
+        cartTotal: null,
+        delFee: 0,
         sheet: false,
         orderbtn:"주문내역 확인하기",
         orderbtnshow:"false",
@@ -143,26 +146,58 @@ import Check from '../components/Check.vue'
           this.$axios.get('api/getCartList', {params:  {
             userKey: that.$store.state.userkey
           }})
-              .then((res) => {
-                console.log(res);
-                //that.cart=res.data;
-              })
-              .catch(err => {
-                console.log(err);
-              })
+          .then((res) => {
+            console.log(res.data);
+            that.item=res.data;
+            for(var i=0;i<res.data.length;i++){
+              that.cartTotal+=res.data[i].product.productPrice * res.data[i].count;
+              that.itemTotal+=res.data[i].count;
+            }
+            if(that.cartTotal<80000) that.delFee=3000;
+          })
+          .catch(err => {
+            console.log(err);
+          })
         },
-        addOrder( cart ){
-            this.$store.dispatch( "addOrder", cart );
+      addCount( productKey, userKey ){
+        this.$axios.get('api/addCount', {params:  {
+            productKey: productKey,
+            userKey: userKey,
+          }})
+        .then((res) => {
+          console.log(res.data);
+          this.$router.go();
+        })
+        .catch(err => {
+          console.log(err);
+        })
       },
-        subOrder( cart ){
-            this.$store.dispatch( "subOrder", cart );
+      subCount( productKey, userKey ){
+        this.$axios.get('api/subCount', {params:  {
+            productKey: productKey,
+            userKey: userKey,
+          }})
+        .then((res) => {
+          console.log(res.data);
+          this.$router.go();
+        })
+        .catch(err => {
+          console.log(err);
+        })
       },
-        addOrderedList( cart ){
-            this.$store.dispatch( "addOrderedList", cart );
-            this.sheet= true;
-      },
-        removeOrderedList( cart ){
-            this.$store.dispatch( "removeOrderedList", cart );
+      deleteItem( productKey, userKey ){
+        this.$axios.get('api/deleteCart', {params:  {
+            productKey: productKey,
+            userKey: userKey,
+          }})
+        .then((res) => {
+         console.log(res.data);
+         alert(res.data);
+         this.$router.go();
+        })
+        .catch(err => {
+          console.log(err);
+        })
       },
       onchange( val ) {
         this.sheet = val
@@ -174,7 +209,7 @@ import Check from '../components/Check.vue'
 <style scoped>
 .mybtn {
   min-width: auto !important;
-  padding: 1vw 2vw !important;
+  padding: 1vw 1vw !important;
 }
 
 </style>

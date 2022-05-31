@@ -115,7 +115,6 @@
             .then((res) => {
               console.log(res);
               // alert(res.data);
-              // this.$router.go();
             })
             .catch(err => {
               console.log(err);
@@ -123,6 +122,7 @@
       },
       onchange( val ) {
         this.sheet = val
+        this.$router.go();
       },
       pModify(){
         console.log("수정원해용");

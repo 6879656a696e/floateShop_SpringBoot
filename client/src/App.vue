@@ -18,7 +18,7 @@
          <v-icon size="26px">
               mdi-cart
             </v-icon>
-            <span class="cartQuan">{{ $store.getters.cartTotalItem }}</span>
+            <span class="cartQuan">{{ total }}</span>
           </router-link>
           </div>
       </template>
@@ -57,14 +57,26 @@ export default {
   data: () => ({
       drawer: false,
       group: null,
+      total: null,
       icons: [
         'mdi-account',
         'mdi-cart',
         'mdi-menu',
       ],
     }),
-
-    watch: {
+  created() {
+    let that=this;
+    this.$axios.get('api/getCartList', {params:  {
+        userKey: this.$store.state.userkey
+      }})
+      .then((res) => {
+        that.total=res.data[0].cart.total;
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    },
+  watch: {
       group () {
         this.drawer = false
       },

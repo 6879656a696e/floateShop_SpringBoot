@@ -1,5 +1,6 @@
 package com.woori.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ public class CartItem {
     @Column(name="cartItemKey")
     private Long id;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name="cartKey")
     private Cart cart;
@@ -33,5 +35,8 @@ public class CartItem {
 
     public void addCount(int count){
         this.count+=count;
+    }
+    public void subCount(int count){
+        this.count-=count;
     }
 }
