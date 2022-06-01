@@ -29,6 +29,14 @@
          <v-list-item  v-for="(cart, idx) in item" :key="idx">
 
            <v-btn color="transparent" depressed class="mybtn mr-5" @click="deleteItem( cart.product.productKey, $store.state.userkey)">&#215;</v-btn>
+           <v-checkbox
+               color="success"
+               hide-details
+               v-model="orderItems"
+               @click="calcPrice(cart.count, cart.product.productKey, cart.cart.id)"
+               :value="cart.count*cart.product.productPrice"
+           ></v-checkbox>
+
           <v-list-item-avatar width="10vw" height="10vw">
             <v-img :src="'/upload/'+cart.product.productPic"></v-img>
           </v-list-item-avatar>
@@ -79,7 +87,7 @@
 
 
     <v-btn block class="mt-12" height="8vh" color="error" outlined
-    v-on:click="addOrderedList( cart )" >
+    @click="goOrder()" >
       배송비 포함 {{ String(cartTotal +  delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 주문하기
     </v-btn>
 
@@ -111,6 +119,8 @@ import Check from '../components/Check.vue'
       },
     data(){
       return {
+        orderItems:[],
+        orderItemsCount:[],
         total: null,
         item:{
           cart:{
@@ -128,8 +138,8 @@ import Check from '../components/Check.vue'
             productCategory: "",
           }
         },
-        itemTotal: null,
-        cartTotal: null,
+        itemTotal: 0,
+        cartTotal: 0,
         delFee: 0,
         sheet: false,
         orderbtn:"주문내역 확인하기",
@@ -141,67 +151,91 @@ import Check from '../components/Check.vue'
       this.loadItems();
     },
     methods: {
-        loadItems(){
-          let that=this;
-          this.$axios.get('api/getCartList', {params:  {
+      loadItems() {
+        let that = this;
+        this.$axios.get('api/getCartList', {
+          params: {
             userKey: that.$store.state.userkey
-          }})
-          .then((res) => {
-            console.log(res.data);
-            that.item=res.data;
-            for(var i=0;i<res.data.length;i++){
-              that.cartTotal+=res.data[i].product.productPrice * res.data[i].count;
-              that.itemTotal+=res.data[i].count;
-            }
-            if(that.cartTotal<80000) that.delFee=3000;
-          })
-          .catch(err => {
-            console.log(err);
-          })
-        },
-      addCount( productKey, userKey ){
-        this.$axios.get('api/addCount', {params:  {
+          }
+        })
+            .then((res) => {
+              console.log(res.data);
+              that.item = res.data;
+            })
+            .catch(err => {
+              console.log(err);
+            })
+      },
+      addCount(productKey, userKey) {
+        this.$axios.get('api/addCount', {
+          params: {
             productKey: productKey,
             userKey: userKey,
-          }})
-        .then((res) => {
-          console.log(res.data);
-          this.$router.go();
+          }
         })
-        .catch(err => {
-          console.log(err);
-        })
+            .then((res) => {
+              console.log(res.data);
+              this.$router.go();
+            })
+            .catch(err => {
+              console.log(err);
+            })
       },
-      subCount( productKey, userKey ){
-        this.$axios.get('api/subCount', {params:  {
+      subCount(productKey, userKey) {
+        this.$axios.get('api/subCount', {
+          params: {
             productKey: productKey,
             userKey: userKey,
-          }})
-        .then((res) => {
-          console.log(res.data);
-          this.$router.go();
+          }
         })
-        .catch(err => {
-          console.log(err);
-        })
+            .then((res) => {
+              console.log(res.data);
+              this.$router.go();
+            })
+            .catch(err => {
+              console.log(err);
+            })
       },
-      deleteItem( productKey, userKey ){
-        this.$axios.get('api/deleteCart', {params:  {
+      deleteItem(productKey, userKey) {
+        this.$axios.get('api/deleteCart', {
+          params: {
             productKey: productKey,
             userKey: userKey,
-          }})
-        .then((res) => {
-         console.log(res.data);
-         alert(res.data);
-         this.$router.go();
+          }
         })
-        .catch(err => {
-          console.log(err);
-        })
+            .then((res) => {
+              console.log(res.data);
+              alert(res.data);
+              this.$router.go();
+            })
+            .catch(err => {
+              console.log(err);
+            })
       },
-      onchange( val ) {
+      onchange(val) {
         this.sheet = val
-      }
+      },
+      goOrder() {
+        console.log("주문염");
+      },
+      calcPrice(cnt, productKey, cartId) {
+        let that = this;
+        that.cartTotal=0;
+        that.itemTotal=0;
+        that.orderItemsCount.push(cnt);
+          for (var i = 0; i < that.orderItems.length; i++) {
+            that.cartTotal += that.orderItems[i];
+            that.itemTotal += that.orderItemsCount[i];
+          }
+
+        if (that.cartTotal < 80000) {
+          that.delFee = 3000;
+        } else {
+          that.delFee = 0;
+        }
+
+        console.log(productKey, cartId);
+      },
     }
   }
 </script>

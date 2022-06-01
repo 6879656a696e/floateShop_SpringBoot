@@ -80,6 +80,10 @@ public class CartService {
         CartItem update = cartItem;
         update.addCount(1);
         cartItemRepository.save(update);
+
+        Cart updateCart = cart;
+        updateCart.setTotal(cartRepository.totalNum()==null ? 0 : cartRepository.totalNum());
+        cartRepository.save(updateCart);
     }
 
     @Transactional
@@ -92,9 +96,14 @@ public class CartService {
         update.subCount(1);
         cartItemRepository.save(update);
 
+        Cart updateCart = cart;
+        updateCart.setTotal(cartRepository.totalNum()==null ? 0 : cartRepository.totalNum());
+        cartRepository.save(updateCart);
+
         if(cartItem.getCount()==0){
             cartItemRepository.delete(cartItem);
         }
+
     }
 
 }
