@@ -32,9 +32,9 @@
            <v-checkbox
                color="success"
                hide-details
-               v-model="orderItems"
-               @click="calcPrice(cart.count, cart.product.productKey, cart.cart.id)"
-               :value="cart.count*cart.product.productPrice"
+               v-model="goOrderItems"
+               @click="calcPrice(cart.count, cart.count*cart.product.productPrice)"
+               :value="cart.product.productKey"
            ></v-checkbox>
 
           <v-list-item-avatar width="10vw" height="10vw">
@@ -121,6 +121,7 @@ import Check from '../components/Check.vue'
       return {
         orderItems:[],
         orderItemsCount:[],
+        goOrderItems: [],
         total: null,
         item:{
           cart:{
@@ -216,14 +217,28 @@ import Check from '../components/Check.vue'
         this.sheet = val
       },
       goOrder() {
-        console.log("주문염");
+        let that=this;
+        this.$axios.get('api/goOrder', {
+          params: {
+            productKey: that.goOrderItems,
+          }
+         })
+        .then((res) => {
+          console.log(res.data);
+          // alert(res.data);
+          // this.$router.go();
+        })
+        .catch(err => {
+          console.log(err);
+        })
       },
-      calcPrice(cnt, productKey, cartId) {
+      calcPrice(cnt, price) {
         let that = this;
         that.cartTotal=0;
         that.itemTotal=0;
         that.orderItemsCount.push(cnt);
-          for (var i = 0; i < that.orderItems.length; i++) {
+        that.orderItems.push(price);
+          for (var i = 0; i < that.goOrderItems.length; i++) {
             that.cartTotal += that.orderItems[i];
             that.itemTotal += that.orderItemsCount[i];
           }
@@ -233,8 +248,6 @@ import Check from '../components/Check.vue'
         } else {
           that.delFee = 0;
         }
-
-        console.log(productKey, cartId);
       },
     }
   }

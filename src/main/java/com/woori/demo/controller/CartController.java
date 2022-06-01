@@ -65,4 +65,10 @@ public class CartController {
         Product product=productService.findProduct(productKey);
         cartService.subCount(product, user);
     }
+
+    @GetMapping("/goOrder")
+    @ResponseBody
+    public void goOrder(Long productKey){
+        System.out.println("product key="+productKey);
+    }
 }
