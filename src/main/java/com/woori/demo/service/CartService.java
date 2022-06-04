@@ -1,29 +1,28 @@
 package com.woori.demo.service;
 
-import com.woori.demo.domain.Cart;
-import com.woori.demo.domain.CartItem;
-import com.woori.demo.domain.Product;
-import com.woori.demo.domain.User;
-import com.woori.demo.repository.CartItemRepository;
-import com.woori.demo.repository.CartRepository;
-import com.woori.demo.repository.ProductRepository;
+import com.woori.demo.domain.*;
+import com.woori.demo.repository.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CartService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final OrderRepository orderRepository;
 
-    public CartService(CartRepository cartRepository, ProductRepository productRepository, CartItemRepository cartItemRepository) {
+    public CartService(CartRepository cartRepository, ProductRepository productRepository, CartItemRepository cartItemRepository, OrderItemRepository orderItemRepository, OrderRepository orderRepository) {
         this.cartRepository = cartRepository;
         this.productRepository = productRepository;
         this.cartItemRepository = cartItemRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.orderRepository = orderRepository;
     }
 
     public void addCart(Product newItem, User user, int count){
@@ -103,7 +102,55 @@ public class CartService {
         if(cartItem.getCount()==0){
             cartItemRepository.delete(cartItem);
         }
-
     }
 
+    @Transactional
+    public void goOrder(Long[] cartIdList, User user, int delFee){
+        Cart cart = cartRepository.findByUserId(user.getId());
+        List<OrderItem> orderItemList = new ArrayList<>();
+        Order order =Order.builder()
+                .isOrderCancel(0)
+                .user(user)
+                .delFee(delFee)
+                .orderDateTime(LocalDateTime.now())
+                .totalPrice(delFee)
+        .build();
+        orderRepository.save(order);
+
+        for(Long cartItemId: cartIdList){
+            System.out.println("cart id="+cartItemId);
+            CartItem cartItem=cartItemRepository.findById(cartItemId).orElseThrow();
+
+            OrderItem orderItem= OrderItem.builder()
+                    .order(order)
+                    .itemKey(cartItem.getProduct().getProductKey())
+                    .itemName(cartItem.getProduct().getProductName())
+                    .itemCount(cartItem.getCount())
+                    .itemPrice(cartItem.getProduct().getProductPrice())
+                    .itemTotalPrice(cartItem.getCount()*cartItem.getProduct().getProductPrice())
+                    .itemPic(cartItem.getProduct().getProductPic())
+                    .isItemCancel(0)
+                    .build();
+
+            orderItemList.add(orderItem);
+            cartItemRepository.deleteById(cartItemId);
+            orderItemRepository.save(orderItem);
+
+            Cart updateCart = cart;
+            updateCart.setTotal(cartRepository.totalNum()==null ? 0 : cartRepository.totalNum());
+            cartRepository.save(updateCart);
+        }
+
+        int tot=orderRepository.totalItemPrice();
+        Order update = order;
+        update =Order.builder()
+                .id(order.getId())
+                .isOrderCancel(0)
+                .user(user)
+                .delFee(delFee)
+                .orderDateTime(LocalDateTime.now())
+                .totalPrice(delFee+tot)
+                .build();
+        orderRepository.save(update);
+    }
 }

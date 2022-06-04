@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="min-height: 100vh">
         <v-card
        elevation = "0"
        color="secondary"
@@ -7,7 +7,7 @@
         min-height="700px"
         height="100%"
         class="d-flex mx-auto flex-column" 
-        v-if="$store.getters.getOrderedProducts.length === 0"
+        v-if="item === ''"
       >
         <v-card-title class="success--text pt-12 flex-column">
           <div class="pt-12">
@@ -25,8 +25,8 @@
        elevation = "0"
        min-height="100%"
        color="secondary"
-    v-show="$store.getters.getOrderedProducts.length > 0"
-    
+    v-show="item != ''"
+
   >
 
     <v-stepper-step
@@ -36,19 +36,24 @@
     </v-stepper-step>
 
     <v-stepper-content step="1">
-     <template v-for="orderedList in orderedList">
+     <template v-for="orderedList in item">
          <v-list-item :key="orderedList.id">
+
           <v-list-item-avatar width="10vw" height="10vw">
-            <v-img :src="orderedList.src"></v-img>
+            <v-img :src="'/upload/'+orderedList.itemPic"></v-img>
           </v-list-item-avatar>
 
           <v-list-item-content>
             <v-list-item-title>
-                {{ orderedList.title }}
+                {{ orderedList.itemName }}
             </v-list-item-title>
             <v-list-item-subtitle>
-                {{ String(orderedList.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 <br>
-                수량: {{ $store.getters.getOrderedProductsthis( orderedList ).quantity }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 총 금액: {{ String($store.getters.getOrderedProductsthis( orderedList ).itemtotalprice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+              {{ orderedList.order.orderDateTime }}
+            </v-list-item-subtitle>
+
+            <v-list-item-subtitle>
+                {{ String(orderedList.itemPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 <br>
+                수량: {{ orderedList.itemCount }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 총 금액: {{ String(orderedList.itemTotalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -57,11 +62,11 @@
           v-if="orderedList.divider"
           :key="orderedList.title"
           :inset="orderedList.inset"
-        ></v-divider> 
+        ></v-divider>
       </template>
 
       <v-card
-    v-show="$store.getters.getOrderedProductsthis.length != 0"
+    v-show="item != ''"
     class="ml-auto"
     width="100%"
     min-height="700px"
@@ -152,12 +157,30 @@
 
 <script>
 import Check from '../components/Check.vue'
+//import qs from 'qs'
   export default {
     components: {
       Check,
     },
     data () {
       return {
+        item:{
+          id: 0,
+          isItemCancel: 0,
+          itemCount: 0,
+          itemKey: 0,
+          itemName: "",
+          itemPic:"",
+          itemPrice: 0,
+          itemTotalPrice: 0,
+          order: {
+            delFee: 0,
+            id: 0,
+            isOrderCancel: 0,
+            orderDateTime: "",
+            totalPrice: 0,
+          }
+        },
         e13: 1,
         orderedList: this.$store.state.orderedList,
         cart: this.$store.state.cart,
@@ -168,10 +191,32 @@ import Check from '../components/Check.vue'
         show: true,
         sheet:false,
         warningsign: "주문 전체가 취소됩니다. 취소하시겠습니까?",
+        userKey: 0,
       }
     },
+    created() {
+      let that=this;
+      that.userKey=this.$store.state.userkey;
+      console.log(that.userKey);
+      this.loadOrderList();
+    },
     methods : {
-        removeOrderedList( cart ){
+      loadOrderList(){
+        let that=this;
+         this.$axios.post('api/getOrderList', null,{
+          params:{
+            id: that.userKey
+          }
+         })
+        .then((res)=>{
+          console.log(res.data);
+          that.item=res.data;
+        })
+        .catch((err)=>{
+          console.log(err);
+        })
+      },
+      removeOrderedList( cart ){
           this.$store.dispatch( "removeOrderedList", cart );
       },
       onchange( val ) {

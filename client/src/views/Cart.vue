@@ -32,9 +32,9 @@
            <v-checkbox
                color="success"
                hide-details
-               v-model="goOrderItems"
                @click="calcPrice(cart.count, cart.count*cart.product.productPrice)"
-               :value="cart.product.productKey"
+               v-model="goOrderItems"
+               :value="cart.id"
            ></v-checkbox>
 
           <v-list-item-avatar width="10vw" height="10vw">
@@ -87,7 +87,7 @@
 
 
     <v-btn block class="mt-12" height="8vh" color="error" outlined
-    @click="goOrder()" >
+    @click="goOrder(delFee)" >
       배송비 포함 {{ String(cartTotal +  delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 주문하기
     </v-btn>
 
@@ -113,6 +113,7 @@
 
 <script>
 import Check from '../components/Check.vue'
+//import qs from 'qs'
   export default {
       components: {
         Check
@@ -122,6 +123,7 @@ import Check from '../components/Check.vue'
         orderItems:[],
         orderItemsCount:[],
         goOrderItems: [],
+        CartItemIdList:{},
         total: null,
         item:{
           cart:{
@@ -160,7 +162,6 @@ import Check from '../components/Check.vue'
           }
         })
             .then((res) => {
-              console.log(res.data);
               that.item = res.data;
             })
             .catch(err => {
@@ -216,17 +217,19 @@ import Check from '../components/Check.vue'
       onchange(val) {
         this.sheet = val
       },
-      goOrder() {
+      goOrder(delFee) {
         let that=this;
         this.$axios.get('api/goOrder', {
-          params: {
-            productKey: that.goOrderItems,
+          params:{
+            cartIdList: that.goOrderItems.join(","),
+            userKey: this.$store.state.userkey,
+            delFee: delFee,
           }
-         })
+        })
         .then((res) => {
           console.log(res.data);
-          // alert(res.data);
-          // this.$router.go();
+           alert("주문되었습니다. 감사합니다.");
+           this.$router.push("/orderDetail");
         })
         .catch(err => {
           console.log(err);
@@ -248,6 +251,7 @@ import Check from '../components/Check.vue'
         } else {
           that.delFee = 0;
         }
+
       },
     }
   }

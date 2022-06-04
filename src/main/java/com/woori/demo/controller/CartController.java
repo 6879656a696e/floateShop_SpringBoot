@@ -8,8 +8,8 @@ import com.woori.demo.service.ProductService;
 import com.woori.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -68,7 +68,8 @@ public class CartController {
 
     @GetMapping("/goOrder")
     @ResponseBody
-    public void goOrder(Long productKey){
-        System.out.println("product key="+productKey);
+    public void goOrder(@RequestParam Long[] cartIdList, Long userKey, int delFee){
+        User user = userService.findUser(userKey);
+        cartService.goOrder(cartIdList, user, delFee);
     }
 }
