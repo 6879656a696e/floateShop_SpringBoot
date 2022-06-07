@@ -104,6 +104,12 @@ public class CartService {
         }
     }
 
+    public int getCartTotal(User user){
+        Cart cart=cartRepository.findByUserId(user.getId());
+        int totalNum=cartRepository.totalNum()==null ? 0 : cartRepository.totalNum();
+        return totalNum;
+    }
+
     @Transactional
     public void goOrder(Long[] cartIdList, User user, int delFee){
         Cart cart = cartRepository.findByUserId(user.getId());
@@ -118,7 +124,6 @@ public class CartService {
         orderRepository.save(order);
 
         for(Long cartItemId: cartIdList){
-            System.out.println("cart id="+cartItemId);
             CartItem cartItem=cartItemRepository.findById(cartItemId).orElseThrow();
 
             OrderItem orderItem= OrderItem.builder()

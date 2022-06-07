@@ -50,12 +50,12 @@
           medium
           right
           top
-          v-on:click="addOrder( product.productKey, $store.state.userkey )"
+          v-on:click="addOrder( product.productKey, $store.state.userkey ), sendCartTotal()"
         >
           <v-icon>mdi-cart</v-icon>
         </v-btn>
         <router-link 
-        v-bind:to="{ path: `/productdetail/${ product.productCategory }/${ product.productKey }`, params: { index:`$( product.productKey )` },}">
+        v-bind:to="{ path: `/productdetail/${ product.productCategory }/${ product.productKey }`, params: { productId:`$( product.productKey )` },}">
         <div class="grey--text mb-2">
           {{ product.productCategory }}
         </div>
@@ -68,7 +68,8 @@
       </v-card-text>
 
       <div v-if="$store.state.role==='ROLE_ADMIN'" class="d-flex justify-end align-center my-4" >
-        <v-btn depressed x-small color="#ea9d96" class="mx-1" @click="pModify(product.productKey)">수정</v-btn>
+        <router-link v-bind:to="{ path: `/modiProduct/${ product.productKey }`, params: { productId:`$( product.productKey )` },}">
+        <v-btn depressed x-small color="#ea9d96" class="mx-1" >수정</v-btn></router-link>
         <v-btn  depressed x-small color="#8aaace" class="mx-1" @click="pDelete(product.productKey)">삭제</v-btn>
       </div>
     </v-card>
@@ -93,6 +94,7 @@
       },
     data(){
       return {
+        cartItemTotal: 0,
         product: {
           productKey: null,
           productName: '',
@@ -107,25 +109,42 @@
         warningsign: "장바구니에 추가되었습니다.",
       }
     },
+    watch:{
+      cartItemTotal(){
+        this.sendCartTotal()
+      }
+    },
     methods: {
+      sendCartTotal(){
+        let that=this;
+        that.$emit('getCartTotal', that.cartItemTotal);
+      },
       addOrder( productKey, userKey ){
-        //this.$store.dispatch( "addOrder", product );
         this.sheet = ! this.sheet;
         this.$axios.get('api/addCart', {params:  {productKey: productKey, userKey: userKey }})
             .then((res) => {
               console.log(res);
+              this.setCartTotal();
               // alert(res.data);
             })
             .catch(err => {
               console.log(err);
+            });
+      },
+      setCartTotal(){
+        let that=this;
+        this.$axios.get('api/getCartTotal', {params:  {
+            userKey: this.$store.state.userkey
+          }})
+            .then((res) => {
+              that.cartItemTotal=res.data;
             })
+            .catch(err => {
+              console.log(err);
+            });
       },
       onchange( val ) {
-        this.sheet = val
-        this.$router.go();
-      },
-      pModify(){
-        console.log("수정원해용");
+        this.sheet = val;
       },
       pDelete(id){
         //let that=this;
@@ -149,7 +168,7 @@
           })
           .catch(err => {
             console.log(err);
-          })
+          });
     }
   }
 </script>

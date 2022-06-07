@@ -56,6 +56,7 @@ public class CartController {
         User user=userService.findUser(userKey);
         Product product=productService.findProduct(productKey);
         cartService.addCount(product, user);
+        cartService.getCartTotal(user);
     }
 
     @GetMapping("/subCount")
@@ -64,6 +65,13 @@ public class CartController {
         User user=userService.findUser(userKey);
         Product product=productService.findProduct(productKey);
         cartService.subCount(product, user);
+    }
+
+    @GetMapping("/getCartTotal")
+    @ResponseBody
+    public int getCartTotal(Long userKey){
+        User user = userService.findUser(userKey);
+        return cartService.getCartTotal(user);
     }
 
     @GetMapping("/goOrder")

@@ -36,8 +36,8 @@
     </v-stepper-step>
 
     <v-stepper-content step="1">
-     <template v-for="orderedList in item">
-         <v-list-item :key="orderedList.id">
+     <template>
+         <v-list-item v-for="(orderedList, idx) in item" :key="idx">
 
           <v-list-item-avatar width="10vw" height="10vw">
             <v-img :src="'/upload/'+orderedList.itemPic"></v-img>
@@ -48,7 +48,7 @@
                 {{ orderedList.itemName }}
             </v-list-item-title>
             <v-list-item-subtitle>
-              {{ orderedList.order.orderDateTime }}
+                {{ order.orderDateTime }}
             </v-list-item-subtitle>
 
             <v-list-item-subtitle>
@@ -58,11 +58,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-divider
-          v-if="orderedList.divider"
-          :key="orderedList.title"
-          :inset="orderedList.inset"
-        ></v-divider>
+        <v-divider></v-divider>
       </template>
 
       <v-card
@@ -78,14 +74,14 @@
     <v-list-item>
       <v-list-item-content class="text-right">
         <p class="myfontsize">
-          총 {{ $store.getters.orderTotalItem }} 개 주문 합계 : {{ String($store.getters.orderTotal).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+          총 {{ orderedCnt }} 개 주문 합계 : {{ String(order.totalPrice-order.delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
         </p>
       </v-list-item-content>
     </v-list-item>
 
     <v-list-item two-line>
       <v-list-item-content class="text-right">
-        <v-list-item-title>배송비 별도: {{ String($store.getters.deliveryFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원</v-list-item-title>
+        <v-list-item-title>배송비 별도: {{ String(order.delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원</v-list-item-title>
         <v-list-item-subtitle>80,000원 이상 구매시 무료배송</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
@@ -100,7 +96,7 @@
         @click="sheet = !sheet"
       >
 
-        배송비 포함 {{ String($store.getters.orderTotal +  $store.getters.deliveryFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 주문취소하기
+        배송비 포함 {{ String(order.totalPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 주문취소하기
       </v-btn>
     </v-stepper-content>
 
@@ -123,10 +119,10 @@
       <v-list-item>
       <v-list-item-content class=" grey--text">
         <p >
-          총 {{ $store.getters.orderTotalItem }} 개 환불 금액 : {{ String($store.getters.orderTotal).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
+          총 {{ orderedCnt }} 개 환불 금액 : {{ String(order.totalPrice-order.delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원
         </p>
         <p class="myfontsize">
-          배송비 포함 {{ String($store.getters.orderTotal +  $store.getters.deliveryFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 환불 완료
+          배송비 포함 {{ String(order.totalPrice+order.delFee).replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} 원 환불 완료
         </p>
       </v-list-item-content>
     </v-list-item>
@@ -164,6 +160,13 @@ import Check from '../components/Check.vue'
     },
     data () {
       return {
+        order: {
+          delFee: 0,
+          id: 0,
+          isOrderCancel: 0,
+          orderDateTime: "",
+          totalPrice: 0,
+        },
         item:{
           id: 0,
           isItemCancel: 0,
@@ -182,8 +185,6 @@ import Check from '../components/Check.vue'
           }
         },
         e13: 1,
-        orderedList: this.$store.state.orderedList,
-        cart: this.$store.state.cart,
         delbtn:"주문취소",
         delbtnshow:"false",
         delall: "false",
@@ -192,45 +193,69 @@ import Check from '../components/Check.vue'
         sheet:false,
         warningsign: "주문 전체가 취소됩니다. 취소하시겠습니까?",
         userKey: 0,
+        orderedCnt: 0,
+        orderId: this.$route.params.orderId,
       }
     },
     created() {
       let that=this;
       that.userKey=this.$store.state.userkey;
-      console.log(that.userKey);
       this.loadOrderList();
+      this.loadOrder();
     },
     methods : {
+      loadOrder(){
+        let that=this;
+        this.$axios.get('http://localhost:8080/api/getThisOrder', {
+          params:{
+            orderId: that.orderId
+          }
+        })
+            .then((res)=>{
+              that.order=res.data;
+            })
+            .catch((err)=>{
+              console.log(err);
+            })
+      },
       loadOrderList(){
         let that=this;
-         this.$axios.post('api/getOrderList', null,{
+        this.$axios.get('http://localhost:8080/api/getOrderList', {
           params:{
-            id: that.userKey
+            orderId: that.orderId
           }
-         })
-        .then((res)=>{
-          console.log(res.data);
-          that.item=res.data;
         })
-        .catch((err)=>{
-          console.log(err);
-        })
-      },
-      removeOrderedList( cart ){
-          this.$store.dispatch( "removeOrderedList", cart );
+            .then((res)=>{
+              that.item=res.data;
+              for(let i=0; i<that.item.length; i++){
+                that.orderedCnt+=that.item[i].itemCount;
+              }
+            })
+            .catch((err)=>{
+              console.log(err);
+            })
       },
       onchange( val ) {
         this.sheet = val
       },
       deleteAll( val  ) {
+        let that=this;
         this.delall = val;
-
-        if( val == true ) {
-          // this.e13 = 2
-          var orderedLength = this.$store.state.orderedList.length;
-          this.$store.state.orderedList.splice( 0, orderedLength);
-        }
-      }
+        this.$axios.get('http://localhost:8080/api/cancelOrder', {
+          params: {
+            orderId: that.orderId
+          }
+        })
+            .then((res) => {
+              console.log(res);
+              alert("주문을 취소했습니다.");
+              that.item=res.data;
+              that.order=res.data;
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+      },
     }
   }
 </script>

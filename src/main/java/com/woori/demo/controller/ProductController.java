@@ -77,4 +77,41 @@ public class ProductController {
     public List<Product> productDetail(@RequestParam Long id){
         return productService.getProductDetail(id);
     }
+
+    @PostMapping("/admin/modiProduct")
+    @ResponseBody
+    public void modifyProduct(@RequestPart("file") MultipartFile files, ProductDto dto){
+        try{
+            String savePath=new File("").getAbsolutePath() + "_upload"+File.separator;
+            String contentType = files.getContentType();
+            String originalFileExtension=contentType.split("/")[1];
+            String originFilename=files.getOriginalFilename();
+            String filename=new MD5Generator(originFilename).toString()+"."+originalFileExtension;
+
+            if(!new File(savePath).exists()){
+                try{
+                    new File(savePath).mkdir();
+                } catch(Exception e){
+                    e.getStackTrace();
+                }
+            }
+
+            String filePath=savePath+filename;
+            files.transferTo(new File(filePath));
+
+            FileDto fileDto = FileDto.builder()
+                    .filename(filename)
+                    .filepath(filePath)
+                    .build();
+
+
+            Long fileId=fileService.saveFile(fileDto);
+            dto.setFileId(fileId);
+            dto.setProductPic(filename);
+            System.out.println(dto.toString());
+            productService.modiProduct(dto);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }

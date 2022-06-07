@@ -18,14 +18,14 @@
          <v-icon size="26px">
               mdi-cart
             </v-icon>
-            <span class="cartQuan">{{ total }}</span>
+            <span class="cartQuan">{{ cartItemTotal }}</span>
           </router-link>
           </div>
       </template>
     </v-app-bar>
     <div class="scroller">
       <v-container fluid color="secondary">
-        <router-view />
+        <router-view @getCartTotal="getCartTotal" />
       </v-container>
         <Footer />
     </div>
@@ -58,6 +58,7 @@ export default {
       drawer: false,
       group: null,
       total: null,
+      cartItemTotal: 0,
       icons: [
         'mdi-account',
         'mdi-cart',
@@ -65,21 +66,34 @@ export default {
       ],
     }),
   created() {
-    let that=this;
-    this.$axios.get('api/getCartList', {params:  {
-        userKey: this.$store.state.userkey
-      }})
-      .then((res) => {
-        that.total=res.data[0].cart.total;
-      })
-      .catch(err => {
-        console.log(err);
-      })
+    this.setCartTotal();
+  },
+  watch:{
+    group () {
+      this.drawer = false
     },
-  watch: {
-      group () {
-        this.drawer = false
-      },
+    cartItemTotal(){
+      this.sendCartTotal()
+    }
+  },
+  methods: {
+    getCartTotal(val){
+      let that=this;
+      that.cartItemTotal=val;
+    },
+
+    setCartTotal(){
+      let that=this;
+      this.$axios.get('api/getCartTotal', {params:  {
+          userKey: this.$store.state.userkey
+        }})
+          .then((res) => {
+            that.cartItemTotal=res.data;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+    },
     },
 };
 </script>

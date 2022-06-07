@@ -22,10 +22,29 @@ public class OrderController {
         this.userService = userService;
     }
 
-    @PostMapping("/getOrderList")
+    @PostMapping("/getOrder")
     @ResponseBody
-    public List<OrderItem> getOrderList(UserDto userDto){
+    public List<Order> getOrder(UserDto userDto){
         User user = userService.findUser(userDto.getId());
-        return orderService.getOrderList(user);
+        return orderService.getOrder(user);
+    }
+
+    @GetMapping("/getOrderList")
+    @ResponseBody
+    public List<OrderItem> getOrderList(Long orderId){
+        return orderService.getOrderList(orderId);
+    }
+
+    @GetMapping("/getThisOrder")
+    @ResponseBody
+    public Order getThisOrder(Long orderId){
+        return orderService.getThisOrder(orderId);
+    }
+
+    @GetMapping("/cancelOrder")
+    @ResponseBody
+    public void cancelOrder(Long orderId){
+        orderService.cancelOrderItem(orderId);
+        orderService.cancelOrder(orderId);
     }
 }

@@ -52,9 +52,9 @@
           </v-list-item-content><br><br>
           <div>
           <v-btn outlined color="info"
-          v-on:click="addCount( cart.product.productKey, $store.state.userkey )" class="mr-1 mybtn">&#43;</v-btn>
+          v-on:click="addCount( cart.product.productKey, $store.state.userkey ), setCartTotal(), sendCartTotal()" class="mr-1 mybtn">&#43;</v-btn>
           <v-btn outlined color="error" class="mybtn"
-          v-on:click="subCount( cart.product.productKey, $store.state.userkey )">&#45;</v-btn>
+          v-on:click="subCount( cart.product.productKey, $store.state.userkey ), setCartTotal(), sendCartTotal()">&#45;</v-btn>
           </div>
         </v-list-item>
       </template>
@@ -124,6 +124,7 @@ import Check from '../components/Check.vue'
         orderItemsCount:[],
         goOrderItems: [],
         CartItemIdList:{},
+        cartItemTotal: 0,
         total: null,
         item:{
           cart:{
@@ -153,6 +154,11 @@ import Check from '../components/Check.vue'
     created() {
       this.loadItems();
     },
+    watch:{
+      cartItemTotal(){
+        this.sendCartTotal()
+      }
+    },
     methods: {
       loadItems() {
         let that = this;
@@ -177,11 +183,24 @@ import Check from '../components/Check.vue'
         })
             .then((res) => {
               console.log(res.data);
+              this.setCartTotal();
               this.$router.go();
             })
             .catch(err => {
               console.log(err);
+            });
+      },
+      setCartTotal(){
+        let that=this;
+        this.$axios.get('api/getCartTotal', {params:  {
+            userKey: this.$store.state.userkey
+          }})
+            .then((res) => {
+              that.cartItemTotal=res.data;
             })
+            .catch(err => {
+              console.log(err);
+            });
       },
       subCount(productKey, userKey) {
         this.$axios.get('api/subCount', {
@@ -192,11 +211,12 @@ import Check from '../components/Check.vue'
         })
             .then((res) => {
               console.log(res.data);
+              this.setCartTotal();
               this.$router.go();
             })
             .catch(err => {
               console.log(err);
-            })
+            });
       },
       deleteItem(productKey, userKey) {
         this.$axios.get('api/deleteCart', {
@@ -207,15 +227,20 @@ import Check from '../components/Check.vue'
         })
             .then((res) => {
               console.log(res.data);
+              this.setCartTotal();
               alert(res.data);
               this.$router.go();
             })
             .catch(err => {
               console.log(err);
-            })
+            });
+      },
+      sendCartTotal(){
+        let that=this;
+        that.$emit('getCartTotal', that.cartItemTotal);
       },
       onchange(val) {
-        this.sheet = val
+        this.sheet = val;
       },
       goOrder(delFee) {
         let that=this;
@@ -229,7 +254,7 @@ import Check from '../components/Check.vue'
         .then((res) => {
           console.log(res.data);
            alert("주문되었습니다. 감사합니다.");
-           this.$router.push("/orderDetail");
+           this.$router.push("/orderList");
         })
         .catch(err => {
           console.log(err);

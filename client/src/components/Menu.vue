@@ -67,41 +67,48 @@
   export default {
     data: () => ({
             group: null,
-            menu: [ {
-              title: '커스텀 상담 예약',
-              target: 'Reservation'
-            }, {
+            menu: [
+            //     {
+            //   title: '커스텀 상담 예약',
+            //   target: 'Reservation'
+            // },
+              {
               title: '디퓨저 & 향수',
               target: 'Products'
-            },{
-              title: 'QnA',
-              target: 'Board'
-            }
+            },
+            //   {
+            //   title: 'QnA',
+            //   target: 'Board'
+            // }
             ],
-            menuAdmin: [ {
-              title: '예약일정 관리',
-              target: 'Reservation'
-            }, {
+            menuAdmin: [
+            //     {
+            //   title: '예약일정 관리',
+            //   target: 'Reservation'
+            // },
+              {
               title: '상품 관리',
               target: 'Products'
-            },{
-              title: 'QnA 관리',
-              target: 'Board'
-            }
+            },
+            //   {
+            //   title: 'QnA 관리',
+            //   target: 'Board'
+            // }
             ],
             menu2: [ 
-                {
-                    icon: 'mdi-account',
-                    title: '마이페이지',
-                    target: 'Mypage'
-                }, {
+                // {
+                //     icon: 'mdi-account',
+                //     title: '마이페이지',
+                //     target: 'Mypage'
+                // },
+              {
                     icon: 'mdi-cart',
                     title: '장바구니',
                     target: 'Cart'
                 }, {
                     icon: 'mdi-message-text',
                     title: '주문내역',
-                    target: 'OrderDetail'
+                    target: 'OrderList'
                 }
             ],
         }),

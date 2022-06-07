@@ -22,7 +22,7 @@
           medium
           right
           top
-          v-on:click="addOrder( product )"
+          v-on:click="addOrder( product.productKey, $store.state.userkey ), sendCartTotal()"
         >
           <v-icon>mdi-cart</v-icon>
         </v-btn>
@@ -88,6 +88,7 @@ import Ratings from '../components/Ratings.vue'
         // const menuId = this.$route.params.productId;
         // const base = this.$store.state.products[menuId-1].base;
       return {
+        cartItemTotal: 0,
         product: {
           productKey: null,
           productName: '',
@@ -127,13 +128,42 @@ import Ratings from '../components/Ratings.vue'
             console.log(err);
           })
       },
+    watch:{
+      cartItemTotal(){
+        this.sendCartTotal()
+      }
+    },
     methods: {
-      addOrder( product ){
-        this.$store.dispatch( "addOrder", product );
+      sendCartTotal(){
+        let that=this;
+        that.$emit('getCartTotal', that.cartItemTotal);
+      },
+      addOrder( productKey, userKey ){
         this.sheet = ! this.sheet;
+        this.$axios.get('http://localhost:8080/api/addCart', {params:  {productKey: productKey, userKey: userKey }})
+            .then((res) => {
+              console.log(res);
+              this.setCartTotal();
+              // alert(res.data);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+      },
+      setCartTotal(){
+        let that=this;
+        this.$axios.get('http://localhost:8080/api/getCartTotal', {params:  {
+            userKey: this.$store.state.userkey
+          }})
+            .then((res) => {
+              that.cartItemTotal=res.data;
+            })
+            .catch(err => {
+              console.log(err);
+            });
       },
       onchange( val ) {
-        this.sheet = val
+        this.sheet = val;
       },
     },
   }

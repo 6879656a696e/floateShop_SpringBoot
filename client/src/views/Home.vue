@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="min-height: 100vh">
   <v-carousel
     cycle
     min-height="500px"
@@ -30,9 +30,9 @@
       cols="4"
     >
         <router-link 
-        v-bind:to="{ path: `/productdetail/${ product.alias }/${ product.id }`, params: { index:`$( product.id )` },}">
+        v-bind:to="{ path: `/productdetail/${ product.productCategory }/${ product.productKey }`, params: { index:`$( product.productKey )` },}">
       <v-img
-        :src="product.src"
+        :src="'/upload/'+product.productPic"
         class="grey lighten-2"
       >
         <template v-slot:placeholder>
@@ -60,7 +60,16 @@
   export default {
     data () {
       return {
-         product: this.$store.state.products,
+        product: {
+          productKey: null,
+          productName: '',
+          productPic: '',
+          productPrice: null,
+          productDesc: '',
+          productCnt: null,
+          itemtotalprice: 0,
+          productCategory: "",
+        },
         items: [
           {
             src: require('@/assets/imgs/slide1.jpg'),
@@ -80,5 +89,16 @@
         ],
       }
     },
+    created() {
+      let that= this;
+      this.$axios.get('api/productList')
+          .then((res) => {
+            console.log(res);
+            that.product=res.data;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+    }
   }
 </script>

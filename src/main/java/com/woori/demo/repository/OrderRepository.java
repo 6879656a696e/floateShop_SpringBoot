@@ -10,5 +10,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query(value="select sum(itemTotalPrice) from orderitem group by orderKey", nativeQuery = true)
     Integer totalItemPrice();
 
-    Order findOrderByUserId(long userKey);
+    List<Order> findOrderByUserId(long userKey);
+
+    Order findOrderById(Long orderId);
 }

@@ -41,6 +41,23 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    @Transactional
+    public Product modiProduct(ProductDto dto){
+        Product product=productRepository.findProductByProductKey(dto.getProductKey());
+        product.builder()
+                .productName(dto.getProductName())
+                .productCategory(dto.getProductCategory())
+                .productCnt(dto.getProductCnt())
+                .productDesc(dto.getProductDesc())
+                .productPic(dto.getProductPic())
+                .fileId(dto.getFileId())
+                .productPrice(dto.getProductPrice())
+                .productNum(dto.getProductNum())
+                .activated(true)
+                .build();
+        return productRepository.save(product);
+    }
+
     public List<Product> getProductList(){
         return productRepository.findAll();
     }

@@ -1,15 +1,14 @@
 package com.woori.demo.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+
+@ToString
 @NoArgsConstructor
 @Getter
 @Entity

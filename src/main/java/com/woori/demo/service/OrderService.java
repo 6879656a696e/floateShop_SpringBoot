@@ -1,5 +1,6 @@
 package com.woori.demo.service;
 
+import com.woori.demo.domain.CartItem;
 import com.woori.demo.domain.Order;
 import com.woori.demo.domain.OrderItem;
 import com.woori.demo.domain.User;
@@ -19,8 +20,27 @@ public class OrderService {
         this.orderItemRepository = orderItemRepository;
     }
 
-    public List<OrderItem> getOrderList(User user){
-        Order order=orderRepository.findOrderByUserId(user.getId());
-        return orderItemRepository.findOrderItemByOrderId(order.getId());
+    public List<Order> getOrder(User user){
+        return orderRepository.findOrderByUserId(user.getId());
+    }
+
+    public List<OrderItem> getOrderList(Long orderId){
+        return orderItemRepository.findOrderItemByOrderId(orderId);
+    }
+
+    public Order getThisOrder(Long orderId){
+        return orderRepository.findOrderById(orderId);
+    }
+
+    public void cancelOrder(Long orderId){
+        Order order = orderRepository.findOrderById(orderId);
+        orderRepository.delete(order);
+    }
+
+    public void cancelOrderItem(Long orderId){
+        List<OrderItem> orderItem= orderItemRepository.findOrderItemByOrderId(orderId);
+        for(OrderItem oi : orderItem){
+            orderItemRepository.delete(oi);
+        }
     }
 }
