@@ -30,6 +30,95 @@
         <Footer />
     </div>
 
+     <template>
+       <v-row justify="center">
+         <v-dialog
+             v-model="dialog"
+             width="600px"
+             height="70vh"
+         >
+           <template v-slot:activator="{ on, attrs }">
+
+             <v-btn
+                 class="mx-2"
+                 fab
+                 dark
+                 large
+                 color="pink"
+                 style="position: fixed; bottom: 2rem; right: 2rem;"
+                 @click="dialog = false"
+                 v-bind="attrs"
+                 v-on="on"
+             >
+               <v-icon dark>
+                 mdi-chat
+               </v-icon>
+             </v-btn>
+           </template>
+           <v-card>
+             <v-card-title>
+               <span class="text-h5">무엇을 도와드릴까요?</span>
+             </v-card-title>
+             <v-col
+                 cols="12"
+                 sm="12"
+                 md="12"
+             >
+             <v-chip
+                 class="my-3 mx-5"
+             >
+               ??????
+             </v-chip>
+             </v-col>
+             <v-col
+                 cols="12"
+                 sm="12"
+                 md="12"
+                 style="text-align: right"
+             >
+             <v-chip
+                 class="my-3  my-5"
+                 color="primary"
+             >
+               *******
+             </v-chip>
+             </v-col>
+               <v-form>
+                 <v-container>
+                   <v-row>
+                     <v-col cols="12">
+                       <v-text-field
+                           v-model="message"
+                           append-outer-icon="mdi-send"
+                           filled
+                           rounded
+                           clear-icon="mdi-close-circle"
+                           clearable
+                           label="Message"
+                           type="text"
+                       ></v-text-field>
+                     </v-col>
+                   </v-row>
+                 </v-container>
+               </v-form>
+
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn
+                   color="green darken-1"
+                   text
+                   @click="dialog = false"
+               >
+                 상담완료
+               </v-btn>
+             </v-card-actions>
+           </v-card>
+         </v-dialog>
+       </v-row>
+     </template>
+
+
+
    <v-navigation-drawer
       v-model="drawer"
       absolute
@@ -58,6 +147,8 @@ export default {
       drawer: false,
       group: null,
       total: null,
+      message: "",
+      dialog: false,
       cartItemTotal: 0,
       icons: [
         'mdi-account',
