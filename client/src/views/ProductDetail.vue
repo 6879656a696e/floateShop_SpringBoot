@@ -59,7 +59,7 @@
         color="secondary" 
           flat
         >
-          <v-card-text >{{ tab.text }}</v-card-text>
+          <v-card-text >{{ tab.text }} {{ product.productDesc}}</v-card-text>
           <Ratings v-if="tab.rating" />
         </v-card>
       </v-tab-item>

@@ -43,8 +43,8 @@ public class ProductService {
 
     @Transactional
     public Product modiProduct(ProductDto dto){
-        Product product=productRepository.findProductByProductKey(dto.getProductKey());
-        product.builder()
+        Product product=Product.builder()
+                .productKey(dto.getProductKey())
                 .productName(dto.getProductName())
                 .productCategory(dto.getProductCategory())
                 .productCnt(dto.getProductCnt())

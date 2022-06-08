@@ -127,13 +127,13 @@
     computed: {
       form () {
         return {
-          pName: this.productName,
-          pCate: this.productCategory,
-          pNum: this.productNum,
-          pPic: this.productPic,
-          pPrice: this.productPrice,
-          pDesc: this.productDesc,
-          pCnt: this.productCnt,
+          pName: this.product.productName,
+          pCate: this.product.productCategory,
+          pNum: this.product.productNum,
+          pPic: this.product.productPic,
+          pPrice: this.product.productPrice,
+          pDesc: this.product.productDesc,
+          pCnt: this.product.productCnt,
         }
       },
     },
@@ -147,7 +147,6 @@
       let that=this;
       this.$axios.get('http://localhost:8080/api/productDetail', {params: {id: this.$route.params.productId}})
           .then((res) => {
-            console.log(res);
             that.product=res.data[0];
           })
           .catch(err => {
@@ -163,13 +162,13 @@
         let that = this;
         let formData=new FormData();
         formData.append("productKey", this.$route.params.productId);
-        formData.append("productName", that.pName);
-        formData.append("productCategory", that.pCate);
-        formData.append("productNum", that.pNum);
+        formData.append("productName", that.product.productName);
+        formData.append("productCategory", that.product.productCategory);
+        formData.append("productNum", that.product.productNum);
         formData.append("file", that.image);
-        formData.append("productPrice", that.pPrice);
-        formData.append("productDesc", that.pDesc);
-        formData.append("productCnt", that.pCnt);
+        formData.append("productPrice", that.product.productPrice);
+        formData.append("productDesc", that.product.productDesc);
+        formData.append("productCnt", that.product.productCnt);
 
         if (validate) {
           this.$axios({
@@ -178,8 +177,7 @@
             data: formData,
             headers: { "Content-Type": "multipart/form-data" }
           })
-              .then((res) => {
-                console.log(res);
+              .then(() => {
                 alert("상품 수정 완료");
                this.$router.push('/products');
               })

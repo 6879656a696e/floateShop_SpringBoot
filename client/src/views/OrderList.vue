@@ -26,7 +26,7 @@
         min-height="700px"
         v-else>
       <v-list-item v-for="(order, idx) in order" :key="idx">
-        <router-link v-bind:to="{path:`/orderdetail/${order.id}`, params:{orderId:`${order.id}`},}">
+        <router-link style="width:100%;" v-bind:to="{path:`/orderdetail/${order.id}`, params:{orderId:`${order.id}`},}">
         <v-list-item-content>
           <v-list-item-title class="mb-2"># {{order.id}}</v-list-item-title>
           <v-list-item-subtitle>

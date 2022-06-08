@@ -108,7 +108,6 @@ public class ProductController {
             Long fileId=fileService.saveFile(fileDto);
             dto.setFileId(fileId);
             dto.setProductPic(filename);
-            System.out.println(dto.toString());
             productService.modiProduct(dto);
         } catch(Exception e){
             e.printStackTrace();
