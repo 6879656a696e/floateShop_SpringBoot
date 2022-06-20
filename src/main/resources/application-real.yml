@@ -2,7 +2,29 @@ spring:
   profiles:
     include: real-db
   jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     properties:
-      hibernate: org.hibernate.dialect.MySQL5InnoDBDialect
+      hibernate:
+        enable_lazy_load_no_trans: true
+        format_sql: true
+        use_sql_comments: true
+    generate-ddl: true
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
   session:
     store-type: jdbc
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      location: /var/inde/floatedShop_boot_upload/
+
+  jwt:
+    header: Authorization
+    secret: ZmxvYXRlZHNob3Atc3ByaW5nLWJvb3Qtand0LXNlY3JldC1mbG9hdGVkc2hvcC1zcHJpbmctYm9vdC1qd3Qtc2VjcmV0Cg==
+    token-validity-in-seconds: 86400
