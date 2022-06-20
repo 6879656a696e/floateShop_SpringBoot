@@ -30,92 +30,98 @@
         <Footer />
     </div>
 
-     <template>
-       <v-row justify="center">
-         <v-dialog
-             v-model="dialog"
-             width="600px"
-             height="70vh"
-         >
-           <template v-slot:activator="{ on, attrs }">
+<!--     <template>-->
+<!--       <v-row justify="center">-->
+<!--         <v-dialog-->
+<!--             v-model="dialog"-->
+<!--             width="600px"-->
+<!--             height="70vh"-->
+<!--         >-->
+<!--           <template v-slot:activator="{ on, attrs }">-->
 
-             <v-btn
-                 class="mx-2"
-                 fab
-                 dark
-                 large
-                 color="pink"
-                 style="position: fixed; bottom: 2rem; right: 2rem;"
-                 @click="dialog = false"
-                 v-bind="attrs"
-                 v-on="on"
-             >
-               <v-icon dark>
-                 mdi-chat
-               </v-icon>
-             </v-btn>
-           </template>
-           <v-card>
-             <v-card-title>
-               <span class="text-h5">무엇을 도와드릴까요?</span>
-             </v-card-title>
-             <v-col
-                 cols="12"
-                 sm="12"
-                 md="12"
-             >
-             <v-chip
-                 class="my-3 mx-5"
-             >
-               ??????
-             </v-chip>
-             </v-col>
-             <v-col
-                 cols="12"
-                 sm="12"
-                 md="12"
-                 style="text-align: right"
-             >
-             <v-chip
-                 class="my-3  my-5"
-                 color="primary"
-             >
-               *******
-             </v-chip>
-             </v-col>
-               <v-form>
-                 <v-container>
-                   <v-row>
-                     <v-col cols="12">
-                       <v-text-field
-                           v-model="message"
-                           append-outer-icon="mdi-send"
-                           filled
-                           rounded
-                           clear-icon="mdi-close-circle"
-                           clearable
-                           label="Message"
-                           type="text"
-                       ></v-text-field>
-                     </v-col>
-                   </v-row>
-                 </v-container>
-               </v-form>
+<!--             <v-btn-->
+<!--                 class="mx-2"-->
+<!--                 fab-->
+<!--                 dark-->
+<!--                 large-->
+<!--                 color="pink"-->
+<!--                 style="position: fixed; bottom: 2rem; right: 2rem;"-->
+<!--                 @click="dialog = false"-->
+<!--                 v-bind="attrs"-->
+<!--                 v-on="on"-->
+<!--             >-->
+<!--               <v-icon dark>-->
+<!--                 mdi-chat-->
+<!--               </v-icon>-->
+<!--             </v-btn>-->
+<!--           </template>-->
+<!--           <v-card>-->
+<!--             <v-card-title>-->
+<!--               <span class="text-h5">무엇을 도와드릴까요?</span>-->
+<!--             </v-card-title>-->
+<!--             <v-col-->
+<!--                 cols="12"-->
+<!--                 sm="12"-->
+<!--                 md="12"-->
+<!--                 v-for="(item, idx) in recvList"-->
+<!--                 :key="idx"-->
+<!--             >-->
+<!--             <v-chip-->
+<!--                 class="my-3 mx-5"-->
+<!--             >-->
+<!--               {{  item.message }}-->
+<!--             </v-chip>-->
+<!--               <v-chip small class="ml-2">-->
+<!--                 {{ item.sendAt }}-->
+<!--               </v-chip>-->
+<!--             </v-col>-->
+<!--             <v-col-->
+<!--                 cols="12"-->
+<!--                 sm="12"-->
+<!--                 md="12"-->
+<!--                 style="text-align: right"-->
+<!--             >-->
+<!--             <v-chip-->
+<!--                 class="my-3  my-5"-->
+<!--                 color="primary"-->
+<!--             >-->
+<!--               *******-->
+<!--             </v-chip>-->
+<!--             </v-col>-->
+<!--               <v-form>-->
+<!--                 <v-container>-->
+<!--                   <v-row>-->
+<!--                     <v-col cols="12">-->
+<!--                       <v-text-field-->
+<!--                           v-model="message"-->
+<!--                           append-outer-icon="mdi-send"-->
+<!--                           filled-->
+<!--                           rounded-->
+<!--                           clear-icon="mdi-close-circle"-->
+<!--                           clearable-->
+<!--                           label="메세지를 입력하세요."-->
+<!--                           @keyup="sendMessage"-->
+<!--                           type="text"-->
+<!--                       ></v-text-field>-->
+<!--                     </v-col>-->
+<!--                   </v-row>-->
+<!--                 </v-container>-->
+<!--               </v-form>-->
 
-             <v-card-actions>
-               <v-spacer></v-spacer>
-               <v-btn
-                   color="green darken-1"
-                   text
-                   @click="dialog = false"
-               >
-                 상담완료
-               </v-btn>
-             </v-card-actions>
-           </v-card>
-         </v-dialog>
-       </v-row>
-     </template>
+<!--             <v-card-actions>-->
+<!--               <v-spacer></v-spacer>-->
+<!--               <v-btn-->
+<!--                   color="green darken-1"-->
+<!--                   text-->
+<!--                   @click="dialog = false"-->
+<!--               >-->
+<!--                 상담완료-->
+<!--               </v-btn>-->
+<!--             </v-card-actions>-->
+<!--           </v-card>-->
+<!--         </v-dialog>-->
+<!--       </v-row>-->
+<!--     </template>-->
 
 
 
@@ -136,6 +142,8 @@
 <script>
 import Footer from './components/Footer.vue'
 import Menu from './components/Menu.vue'
+// import Stomp from 'webstomp-client'
+// import SockJS from 'sockjs-client'
 
 export default {
   name: "App",
@@ -150,6 +158,8 @@ export default {
       message: "",
       dialog: false,
       cartItemTotal: 0,
+      userKey: this.$store.state.userKey,
+      recvList:[],
       icons: [
         'mdi-account',
         'mdi-cart',
@@ -185,7 +195,53 @@ export default {
             console.log(err);
           });
     },
-    },
+
+    // sendMessage(e){
+    //   if(e.keyCode===13&& this.userKey !=='' && this.message !==''){
+    //     this.send();
+    //     this.message='';
+    //   }
+    // },
+    //
+    // send(){
+    //   console.log("send message: "+this.message);
+    //
+    //   if(this.stompClient && this.stompClient.connected){
+    //     const msg={
+    //       user:{
+    //         userKey: this.userKey
+    //       },
+    //       message: this.message,
+    //       sendAt: Date.now(),
+    //       isRequest: false,
+    //     }
+    //     this.stompClient.send("/receive", JSON.stringify(msg), {});
+    //   }
+    // },
+    //
+    // connect(){
+    //   const serverURL="http://localhost:5050/chat"
+    //   let socket=new SockJS(serverURL);
+    //   this.stompClient = Stomp.over(socket);
+    //   console.log(`소켓 연결을 시도합니다. 서버주소: ${serverURL}`);
+    //   this.stompClient.connect(
+    //       {},
+    //       frame=>{
+    //         this.connected=true;
+    //         console.log('소켓 연결 성공', frame);
+    //
+    //         this.stompClient.subscribe("/send", res=>{
+    //           console.log('구독으로 받은 메세지', res.body);
+    //           this.recvList.push(JSON.parse(res.body));
+    //         });
+    //       },
+    //       error => {
+    //         console.log('소켓 연결 실패!', error);
+    //         this.connected=false;
+    //       }
+    //   )
+    // },
+  },
 };
 </script>
 
